@@ -4,7 +4,7 @@ draft: false
 tags:
   - build
 ---
-### Before the content...
+## Before the content...
 
 Quartz documentation : [Welcome to Quartz 4 (jzhao.xyz)](https://quartz.jzhao.xyz/)
 
@@ -16,7 +16,7 @@ And watching a video is much easier than reading passages or documents (lol). Ne
 
 Anyway, let's start !
 
-### Prerequisites
+## Prerequisites
 
 - VS Code
 	- with WSL (because I'm using windows)
@@ -38,7 +38,7 @@ Anyway, let's start !
 		```
 
 
-### Install and initialize Quartz
+## Install and initialize Quartz
 
 [Welcome to Quartz 4 (jzhao.xyz)](https://quartz.jzhao.xyz/)
 
@@ -69,7 +69,7 @@ npm config get registry # to verify the source
 
 Once the installation is done, you can open your folder in VS Code for the convenience of later operations.
 
-### Set up Github repository
+## Set up Github repository
 
 [Setting up your GitHub repository (jzhao.xyz)](https://quartz.jzhao.xyz/setting-up-your-GitHub-repository)
 
@@ -125,7 +125,7 @@ npx quartz sync --no-pull
 
 When everything has done, our folder will be synchronized to the repository.
 
-### Set up your Obsidian vault
+## Set up your Obsidian vault
 
 [Authoring Content (jzhao.xyz)](https://quartz.jzhao.xyz/authoring-content)
 
@@ -160,7 +160,7 @@ If you want to see the website locally, look here [Building your Quartz (jzhao.x
 
 Just a few lines of code enables you to preview your site locally.
 
-### Publish with Github Pages
+## Publish with Github Pages
 
 [Hosting (jzhao.xyz)](https://quartz.jzhao.xyz/hosting#github-pages)
 
@@ -171,4 +171,29 @@ Then go to github `Settings` > `Pages` > `Source` and select `Github Actions`
 Commit all the changes by doing `npx quartz sync` (This is also the method for commiting all your changes in the future)
 
 And your site will be deployed at `<github-username>.github.io/<repository-name>`
+
+## Customization
+
+Here I will introduce how to change your title and icon of the tab.
+
+### Change title
+
+Open the file `quartz.config.ts` in your folder. And you'll see...
+
+```ts
+const config: QuartzConfig = {
+  configuration: {
+    pageTitle: "🔔 Bell's Collection", // Here you can change your title
+    enableSPA: true,
+    enablePopovers: true,
+    analytics: {
+      provider: "plausible",
+    },
+    ...
+```
+
+
+### Change icon of the tab
+
+Enter the path `/quartz/components/static` and you'll see the icon image. Just replace it with your icon image with the name `icon.png` then the icon of the tab will show your icon.
 
