@@ -1,5 +1,5 @@
 ---
-title: <% tp.file.title %>
+title: Easy Record
 draft: false
 tags:
   - solution

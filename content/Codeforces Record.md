@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: Codeforces Record
 draft: false
 tags:
   - solution
