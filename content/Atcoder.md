@@ -1,13 +1,138 @@
 [toc]
 
+## ABC370
+#### [A - Raise Both Hands (atcoder.jp)](https://atcoder.jp/contests/abc370/tasks/abc370_a)
 
+给两个数 $L,R$ ，$L=1$ 时输出 `Yes` ， $R = 1$ 时输出 `No` . 如果 $L,R$ 同时为 1 或 0 输出 `Invalid` .
 
-### [A - 369 (atcoder.jp)](https://atcoder.jp/contests/abc369/tasks/abc369_a)
+$L,R$ 只可能是 0 或 1 .
 
+读懂题的时候就知道怎么做了.
+
+#### [B - Binary Alchemy (atcoder.jp)](https://atcoder.jp/contests/abc370/tasks/abc370_b)
+
+#simulation 
+
+有 $N$ 种元素，分别是 $1,2,...,N$ . 
+
+元素之间可以结合，$i$ 和 $j$ 结合就会变成元素 $A_{\max(i,j),\min(i,j)}$ 
+
+从元素 1 开始，按顺序与 $1,2,...,N$ 结合，求最终得到的元素.
+
+$1\leq N\leq 100,1\leq A_{i,j} \leq N$
+
+设第 $i$ 次结合得到的元素为 $x_i$
+
+$$
+x_i = A_{\max(i,x_{i-1}),\min(i,x_{i-1})}
+$$
+
+$x_0 = 1$. 直接模拟即可.
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> int N,ans;
+> int A[105][105];
+> 
+> int main()
+> {
+>   cin >> N;
+>   for(int i =1 ;i <= N;i ++)
+>     for(int j = 1;j <= i;j ++)
+>       cin >> A[i][j];
+>   ans = 1;
+>   for(int i = 1;i <= N;i ++)
+>   {
+>     ans = A[max(ans,i)][min(ans,i)];
+>   }
+>   cout << ans;
+>   return 0;
+> }
+> ```
+
+#### [C - Word Ladder (atcoder.jp)](https://atcoder.jp/contests/abc370/tasks/abc370_c)
+
+#greedy #string 
+
+给两个只有小写字母的字符串 $S$ 和 $T$，  它们长度相同.
+
+让 $X$ 为一个空数组，重复下列步骤直到 $S = T$ ：
+
+- 改变 $S$ 中的一个字符，并将 $S$ 追加入数组 $X$ 中.
+
+找到长度最小的数组 $X$ . 如果有多个答案，输出字典序最小的答案.
+
+$1\leq |S| = |T| \leq 100$
+
+相等的字符不需要改变，所以 $X$ 的长度就是这俩字符串有着不同字符的位置的个数. 现在考虑怎样构造字典序最小的答案.
+
+$S,T$ 中相等的字符不会产生影响，考虑不同字符带来的影响.
+
+需要改变的字符只有以下两种情况.
+1. $S_i < T_i$
+2. $S_i > T_i$
+
+第二种情况使得 $S$ 的字典序变小，所以我们应当先对第二种情况进行操作. 在对第二种情况进行操作的时候，我们应当按它们在 $S$ 中的出现顺序进行操作.
+
+处理完第二种情况之后，再去处理第一种情况. 这时由于这些字符字典序要变大，所以我们尽可能先让后面的发生改变，位于前面的字符尽可能晚地发生改变，所以我们应当逆着它们在 $S$ 中出现顺序的进行操作.
+
+以上贪心策略即可构造出字典序最小的答案. 代码写得又臭又长 QwQ.
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> const int maxn = 100;
+> string S,T;
+> bool vis[maxn + 5];
+> int n;
+> vector< int > rec;
+> char ch[maxn + 5];
+> 
+> int main()
+> {
+>   cin >> S >> T;
+>   n = S.size();
+>   for(int i = 0;i < n;i ++)
+>   {
+>     ch[i] = S[i];
+>     if(S[i] != T[i])
+>     {
+>       if(S[i] > T[i])
+>       {
+>         rec.push_back(i);
+>         vis[i + 1] = 1;
+>       }
+>       else vis[i + 1] = 0;
+>     }
+>     else vis[i + 1] = 1;
+>   }
+>   for(int i = n - 1;i >= 0;i --)
+>     if(vis[i + 1] == 0)
+>       rec.push_back(i);
+>   cout << rec.size() << endl;
+>   for(int i = 0;i < rec.size();i ++)
+>   {
+>     ch[rec[i]] = T[rec[i]];
+>     for(int j = 0;j < n;j ++)
+>       cout << ch[j];
+>     cout << endl;
+>   }
+>   return 0;
+> }
+> ```
+
+---
+
+## ABC369
+
+#### [A - 369 (atcoder.jp)](https://atcoder.jp/contests/abc369/tasks/abc369_a)
 #math 
-
 给两个整数 $A, B$ ，找一个 $x$ 使得这 3 个数可以排成等差数列. 问这样的 $x$ 有多少个.
-
 $1\leq A,B \leq 100$
 
 不妨令 $A\leq B$
@@ -17,22 +142,17 @@ $1\leq A,B \leq 100$
 
 第2种要求 $A+B$ 模 2 为 0. 如果 $A=B$ 则 3 种情况下的 $x$ 是相同的.
 
-### [B - Piano 3 (atcoder.jp)](https://atcoder.jp/contests/abc369/tasks/abc369_b)
-
+#### [B - Piano 3 (atcoder.jp)](https://atcoder.jp/contests/abc369/tasks/abc369_b)
 #simulation 
-
 Takahashi 将在钢琴上按顺序按下 $N$ 个琴键，第 $i$ 次按下琴键 $A_i$ ，如果此时 $S_i = \text L$ 那么用左手弹下，如果 $S_i = \text R$ 那么用右手弹下. 最开始疲劳程度为 0 ，当他的一只手从琴键 $x$ 移动到 $y$ 时，疲劳值增加 $|y-x|$ . 找到弹这个谱子的最小疲劳值.
-
 $1\leq N\leq 100,1\leq A_i\leq 100$
 
 Takahashi 只能按顺序弹，所以直接计算左手累积的疲劳值加上右手累积的疲劳值即可
 
-### [C - Count Arithmetic Subarrays (atcoder.jp)](https://atcoder.jp/contests/abc369/tasks/abc369_c)
+#### [C - Count Arithmetic Subarrays (atcoder.jp)](https://atcoder.jp/contests/abc369/tasks/abc369_c)
 #math #combinatorics 
-
 给一个有 $N$ 个正整数的序列 $A = (A_1,A_2,...,A_N)$. 计算满足以下要求的整数对 $(l,r)$ 的数量：
 $1\leq l\leq r\leq N$ 使得 $(A_l,A_{l + 1},...,A_{r})$ 是等差数列
-
 $1\leq N\leq 2\times 10^5,1\leq A_i \leq 10^9$
 
 🤓☝️知道如果一个序列 $a_1,...,a_n$ 是等差数列，那么 $\forall 1\leq l\leq r\leq n, a_l,...,a_r$ 都是等差数列. 于是我们考虑找到最长的那些等差数列 $(l_1,r_1),(l_2,r_2),...,(l_m,r_m)$ ，显然 $r_1\leq l_2,r_2\leq l_3,...,r_i\leq l_{i + 1}$ ，那么答案的一部分就是
@@ -86,25 +206,18 @@ $$
 > ```
 > 
 > 
-### [D - Bonus EXP (atcoder.jp)](https://atcoder.jp/contests/abc369/tasks/abc369_d)
-
+#### [D - Bonus EXP (atcoder.jp)](https://atcoder.jp/contests/abc369/tasks/abc369_d)
 #dp 
-
 Takahashi 将按顺序遇到 $N$ 只怪物，第 $i$ 只怪物有力量值 $A_i$.
-
 对于每只怪物，他可以选择放走或者打败它.
-
 每次行动得到的经验值情况如下：
 - 如果放走这只怪物，他将获得 0 经验值
 - 如果他击败这只怪物，这只怪物有力量值 $X$ ，那么他将获得 $X$ 经验值.
 - 如果这只怪物是第偶数个被击败的，那么他将额外再获得 $X$ 经验值.
-
 求他可以获得的最大经验值.
-
 $1\leq N\leq 2\times 10^5,1\leq A_i \leq 10^9$
 
 每次面对怪物都有两种选择，将每次面对怪物视为一个阶段，选择作为决策，同时还需要知道击败的这只怪物是第奇数个被击败还是第偶数个被击败. 考虑 DP.
-
 设 $f(i,0/1)$ 表示遇到第 $i$ 只怪物，最后一个被击败的怪物是第偶数个/第奇数个时的最大经验值.
 
 - 放走这只怪物
@@ -152,17 +265,12 @@ $\max\{f(N,0),f(N,1)\}$ 即为答案.
 > ```
 > 
 > 
-### [E - Sightseeing Tour (atcoder.jp)](https://atcoder.jp/contests/abc369/tasks/abc369_e)
-
+#### [E - Sightseeing Tour (atcoder.jp)](https://atcoder.jp/contests/abc369/tasks/abc369_e)
 #graph/shortest-path/floyd #brute-force #dfs
-
 有 $N$ 个小岛和 $M$ 个连接两个小岛的双向桥. 没有自环，但是两座岛之间有多个桥. 第 $i$ 个桥连接小岛 $U_i$ 和 $V_i$ ，花费时间 $T_i$.
-
 给 $Q$ 个询问，回答这些询问，第 $i$ 个询问内容如下：
-
 现在给 $K_i$ 个不同的桥，$B_{i,1},B_{i,2},...,B_{i,K_i}$， 求出必须经过这些桥的从小岛 $1$ 到小岛 $N$ 的最短用时
 你可以以任意方向或顺序穿过这些桥.
-
 $2\leq N\leq 400$
 $N-1\leq M\leq 2\times 10^5$
 $1\leq U_i < V_i \leq N$
@@ -172,7 +280,6 @@ $1\leq K_i \leq 5$
 $1\leq B_{i,1} < B_{i,2} < ... < B_{i,K_i} \leq M$
 
 题目看着好复杂 TwT... 🤓☝️ $N\leq 400$ ! $K_i \leq 5$ ! $Q\leq 3000$ ! 不妨先用最简单粗暴的方法做一做！
-
 因为这个必须通过的桥最多只有 5 座，那么通过的顺序一共有 $K!=120$ 种，然后又可以从任意方向通过，又有 $2^K=32$ 种通过方式，总共就是 $3840$ 种方式. 而 $Q\leq 3000$ ，那么直接枚举所有可能性是不会超时的. $N\leq 400$ ，可以用 Floyd 先求出所有小岛之间的最短用时，然后枚举所有情况，比如某种情况是 $V_0 = 1,U_1,V_1,U_2,V_2,...,U_K,V_K,U_{K+1}=N$ 那么用时就是 $\sum dis(U_i,V_{i - 1}) + \sum T_i$
 在所有情况中取最小值即可.
 
@@ -254,16 +361,16 @@ $1\leq B_{i,1} < B_{i,2} < ... < B_{i,K_i} \leq M$
 > ```
 > 
 > 
+
+
+---
+
 #### [E - Apple Baskets on Circle (atcoder.jp)](https://atcoder.jp/contests/abc270/tasks/abc270_e)
-
 #simulation #sort #binary-search 
-
 有 $N$ 个篮子围成一圈，第 $i$ 个篮子有 $A_i$ 个苹果，从第 1 个篮子开始，如果当前篮子有苹果就吃 1 个，无论有没有吃上苹果，都到下一个篮子去，重复以上步骤. 当恰好吃了 $K$ 个苹果的时候，每个篮子里还剩多少苹果
-
 $1\leq N \leq 10^5, 0\leq A_i \leq 10^12, 1\leq K \leq 10^12, \sum A_i \geq K$
 
 考虑到每个篮子前都会吃 1 个苹果的情况，这个时候所有篮子都有苹果，吃 1 圈就吃掉 $N$ 个苹果，所以当出现空篮子的时候，一定是最少苹果的篮子变空，而这时已经吃了 $A_{min}\times N$ 个苹果. 接着只要把空篮子排除在外，问题又转化为上述情况. 
-
 于是可以考虑先将篮子按苹果的多少排个序. 然后可以吃 $A_{min}\times N + A_{min2}\times(N-1) + \cdots$ 个苹果，直至还要吃的苹果数不够吃空最少苹果的篮子，然后特殊处理，最终还要吃的苹果不够吃1圈剩下还有苹果的篮子，这个时候按顺序排序，逐个逐个吃光要吃的苹果数即可.
 
 > [!code]- Code
@@ -351,20 +458,16 @@ $1\leq N \leq 10^5, 0\leq A_i \leq 10^12, 1\leq K \leq 10^12, \sum A_i \geq K$
 > 
 
 #### [D - I Hate Non-integer Number (atcoder.jp)](https://atcoder.jp/contests/abc262/tasks/abc262_d)
-
 #dp #combinatorics 
-
 给一个长度为 $N$ 的数组 $A = (a_1,...,a_N)$, 有 $2^N - 1$ 种方式从 $A$ 中选出一个或更多数. 其中有多少种方案，选出的数的平均数是整数？答案模 998244353
 $1\leq N \leq 100, 1\leq a_i \leq 10^9$
 
 考虑到求 $(a_1+...+a_m)\mod m$ 的方案数，这类型的运算满足分配律，可以考察所有组合下对所有可能的模数取模得到的结果的方案数.
-
 具体地说，设 $f(i,j,k,m)$ 表示前 $i$ 个数选了 $j$ 个，模数为 $k$ 结果为 $m$ 的方案数. “前 $i$ 个数选 $j$ 个”明显是求组合选择方案数的经典方法，“模数为 $k$ 结果为 $m$” 则是根据模运算和加法运算结合的性质而想到的. 此时转移方程呼之欲出.
 $$
 f(i,j,k,(m+a_i)\bmod k) = f(i-1,j,k,(m+a_i)\bmod k) + f(i-1,j-1,k,m)
 $$
 $O(N^4)$ 不满，可过
-
 类似的题目 [[Leetcode Record#[3260. 找出最大的 N 位 K 回文数](https //leetcode.cn/problems/find-the-largest-palindrome-divisible-by-k/description/)]]
 
 > [!code]- Code
@@ -414,7 +517,6 @@ $O(N^4)$ 不满，可过
 > 
 
 ### AGC024
-
 #greedy
 #### B - Backfront
 
@@ -577,9 +679,7 @@ $$
 
 
 #### E - Integers on Grid (DP 优化)
-
 #dp #optimization 
-
 题意：给一个 $H\times W$ 的网格，其中有 $N$ 个格子的值为 $A(i,j)$  ，其余的格子的值均为 $0$.你有一个棋子，最开始放在某一个格子 $(i,j)$ 上，这个棋子可以移动到另一个格子 $(x,y)$ 当且仅当：
 
 - $A(i,j) < A(x,y)$.
