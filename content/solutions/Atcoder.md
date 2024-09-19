@@ -1,5 +1,380 @@
 [toc]
 
+
+## ABC371
+
+#### [A - Jiro (atcoder.jp)](https://atcoder.jp/contests/abc371/tasks/abc371_a)
+
+有三兄弟 $A,B,C$ ，给你他们之间的大小关系 $S_{AB}, S_{AC}, S_{BC}$ （要么是 `<`, 要么是 `>`）
+
+找到老二.
+
+穷举所有情况即可知道每种情况对应的答案
+
+#### [B - Taro (atcoder.jp)](https://atcoder.jp/contests/abc371/tasks/abc371_b)
+
+有 $N$ 个家庭 $M$ 个婴儿，按出生时间顺序输入，只有每个家庭第一个出生的男婴才能叫 Taro. 判断每位婴儿是否叫 Taro
+
+对所有家庭第一个出现的男婴输出 `YES` ，然后打上标记，此后的本家庭男婴均为 `NO`.
+
+女婴直接输出 `NO` 即可.
+
+#### [C - Make Isomorphic (atcoder.jp)](https://atcoder.jp/contests/abc371/tasks/abc371_c)
+
+#graph #enumerate 
+
+给两个简单无向图 $G$ 和 $H$ ，两张图都有 $N$ 个点. 你可以对 $H$ 进行任意次以下操作
+
+- 选一对整数 $(i,j)$ 满足 $1\leq i < j\leq N$ . 花费 $A_{i,j}$ 元，如果在 $H$ 中 $i,j$ 之间没有边，那么就加上这条边，否则就去掉这条边.
+
+找到使得 $G$ 和 $H$ 同构的最小花费. 
+
+$1\leq N\leq 8$
+
+让 $G$ 不动，设顶点集为 ${\cal G} = \{1,2,3,...,N\}$. 考虑 $H$ 的顶点所有可能的排列，${\cal H} = \{p_1,p_2,...,p_N\}$. 然后让 $G$ 中第 $i$ 个顶点和第 $j$ 个顶点对应第 $p_i$ 个顶点和第 $p_j$ 个顶点. 那么方便来说就要考虑用邻接矩阵. $g(i,j) \neq h(p_i,p_j)$ 就需要产生花费. 枚举所有可能的情况，取花费总和最小的作为答案.
+
+时间复杂度 $O(N!\cdot N^2)$
+
+代码中包含了 `next_permutation` 的使用
+
+> [!code]- Code
+> ```cpp
+> #include <bits/stdc++.h>
+> 
+> using namespace std;
+> int N, u, v, MG, MH, ans = 1000000007;
+> bool G[10][10], H[10][10];
+> int cost[10][10], p[10];
+> 
+> 
+> int main()
+> {
+>     cin >> N;
+>     cin >> MG;
+>     for(int i = 1;i <= MG;i ++)
+>     {
+>         cin >> u >> v;
+>         G[u][v] = 1;
+>         G[v][u] = 1;
+>     }
+>     cin >> MH;
+>     for(int i = 1;i <= MH;i ++)
+>     {
+>         cin >> u >> v;
+>         H[u][v] = 1;
+>         H[v][u] = 1;
+>     }
+>     for(int i = 1;i <= N;i ++)
+>     {
+>         for(int j = i + 1;j <= N;j ++)
+>         {
+>             cin >> cost[i][j];
+>             cost[j][i] = cost[i][j];
+>         }
+>     }
+>     for(int i = 1;i <= N;i ++) p[i] = i;
+>     do
+>     {
+>         int sum = 0;
+>         for(int i = 1;i <= N;i ++)
+>         {
+>             for(int j = 1;j < i;j ++)
+>             {
+>                 if(G[i][j] != H[p[i]][p[j]])
+>                 {
+>                     sum += cost[p[i]][p[j]];
+>                 }
+>             }
+>         }
+>         ans = min(ans, sum);
+>     } while (next_permutation(p + 1,p + 1 + N));
+>     cout << ans << endl;
+>     return 0;
+> }
+> ```
+
+
+#### [D - 1D Country (atcoder.jp)](https://atcoder.jp/contests/abc371/tasks/abc371_d)
+
+#prefix_sum #binary-search 
+
+
+有 $N$ 个村庄在一条线上，第 $i$ 个村庄在 $X_i$, 有 $P_i$ 个村民.
+
+回答 $Q$ 次询问，每次询问问在坐标 $L_i,R_i$ 之间，生活着多少村民.
+
+$1\leq N, Q\leq 2\times 10^5$
+
+$-10^9\leq X_1 < X_2 < ... < X_N \leq 10^9$
+
+$1\leq P_i \leq 10^9$
+
+二分出最靠近 $L_i,R_i$ 的村庄 $l,r$ .
+
+$S_r - S_{l-1}$ 即为答案. $S_i$ 表示前 $i$ 个村庄的总人口.
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> typedef long long ll;
+> const int maxn = 2e5;
+> ll N, Q, LQ, RQ;
+> ll x[maxn + 5],p[maxn + 5],sum[maxn + 5], lp, rp;
+> 
+> int bisearch(ll pos,bool ty)
+> {
+>     int L = 1;int R = N;int mid = 0;int res = 0;
+>     if(ty) res = N;
+>     else res = 1;
+>     for(;L <= R;)
+>     {
+>         mid = (L + R) >> 1;
+>         if(ty)
+>         {
+>             if(pos >= x[mid])
+>             {
+>                 res = mid;
+>                 L = mid + 1;
+>             }
+>             else R = mid - 1;
+>         }
+>         else{
+>             if(pos <= x[mid])
+>             {
+>                 res = mid;
+>                 R = mid - 1;
+>             }
+>             else L = mid + 1;
+>         }
+>     }
+>     return res;
+> }
+> 
+> int main()
+> {
+>     cin >> N;
+>     for(int i = 1;i <= N;i ++)
+>         cin >> x[i];
+>     for(int i = 1;i <= N;i ++)
+>     {
+>         cin >> p[i];
+>         sum[i] = sum[i - 1] + p[i];
+>     }
+>     cin >> Q;
+>     for(int i = 1;i <= Q;i ++)
+>     {
+>         cin >> LQ >> RQ;
+>         if(RQ < x[1] || LQ > x[N]) cout << 0 << endl;
+>         else{
+>             lp = bisearch(LQ,0);
+>             rp = bisearch(RQ,1);
+>             cout << sum[rp] - sum[lp - 1] << endl;
+>         }
+>         
+>     }
+>     
+> 
+>     return 0;
+> }
+> ```
+
+
+
+#### [E - I Hate Sigma Problems (atcoder.jp)](https://atcoder.jp/contests/abc371/tasks/abc371_e)
+
+#ds/segment_tree #key 
+
+给一个长度为 $N$ 的整数序列 $A = (A_1,A_2,...,A_N)$
+
+定义 $f(l,r)$ 为在 $(A_{l},A_{l+1},...,A_{r})$ 中不同元素的个数.
+
+求
+
+$$
+\sum_{i=1}^{N}\sum_{j=i}^{N} f(i,j)
+$$
+
+$1\leq N \leq 2\times 10^5$
+
+$1\leq A_i \leq N$
+
+
+考虑一个整数序列 $(A_1,A_2,...,A_{i-1})$ 加入一个新元素 $A_i$ ，$\forall \, 1\leq l\leq i,\,f(l,i)$ 会怎么变化.
+
+假设里 $A_i$ 最近的相同元素为 $A_k$， 那么当 $A_i$ 加进来的时候
+
+- $\forall\,k<l\leq i,\,f(l,i) = f(l,i-1)+1$
+
+- $\forall\, 1\leq l\leq k,\,f(l,i) = f(l,i - 1)$
+
+于是我们可以用 $g(j)$ 表示 $(A_j,...,A_i)$ 的不同元素的个数. 对 $[k+1,i]$ 区间的 $g(j)$ 都加 1. 其他自然不需变. 
+
+然后每次新加一个元素就对应操作，然后对答案加上全体和. 用线段树维护 $g(j)$ 的区间和.
+
+时间复杂度 $O(N\log N)$
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> typedef long long ll;
+> const int maxn = 2e5;
+> ll N, lst[maxn + 5], a[maxn + 5];
+> ll ans, tr[(maxn << 2) + 5], tag[(maxn << 2) + 5];
+> 
+> int lson(int x)
+> {
+>     return x << 1;
+> }
+> 
+> int rson(int x)
+> {
+>     return lson(x) + 1;
+> }
+> 
+> void Pushdown(int k,int L,int mid,int R)
+> {
+>     tag[lson(k)] += tag[k];
+>     tag[rson(k)] += tag[k];
+>     tr[lson(k)] += tag[k]*(mid - L + 1);
+>     tr[rson(k)] += tag[k]*(R - mid);
+>     tag[k] = 0;
+>     return ;
+> }
+> 
+> void Add(int k,int L,int R,int l,int r)
+> {
+>     if(L > r || R < l) return ;
+>     if(l <= L && R <= r)
+>     {
+>         tag[k] ++;
+>         tr[k] += (R - L + 1);
+>         return ;
+>     }
+>     int mid = (L + R) >> 1;
+>     Pushdown(k,L,mid,R);
+>     Add(lson(k),L,mid,l,r);
+>     Add(rson(k),mid + 1,R,l,r);
+>     tr[k] = tr[lson(k)] + tr[rson(k)];
+>     return ;
+> }
+> 
+> ll Query(int k,int L,int R,int l,int r)
+> {
+>     if(L > r || R < l) return 0;
+>     if(l <= L && R <= r) return tr[k];
+>     int mid = (L + R) >> 1;
+>     Pushdown(k,L,mid,R);
+>     ll res = Query(lson(k),L,mid,l,r) + Query(rson(k),mid + 1,R,l,r);
+>     tr[k] = tr[lson(k)] + tr[rson(k)];
+>     return res;
+> }
+> 
+> int main()
+> {
+>     cin >> N;
+>     for(int i = 1;i <= N;i ++)
+>         cin >> a[i];
+>     for(int i = 1;i <= N;i ++)
+>     {
+>         Add(1,1,N,lst[a[i]] + 1,i);
+>         ans += Query(1,1,N,1,i);
+>         lst[a[i]] = i;
+>     }
+> 
+>     cout << ans << endl;
+>     return 0;
+> }
+> ```
+
+> [!important] Key
+> 
+> $O(N^3)$ 肯定是超时的，考察变化过程中的规律，减少运算是关键
+> 
+> 类似差分的思想，$f(l,i) - f(l,i-1)=1$
+> 
+> 还有对“种类”的理解，第一次出现才是新种类，才会对答案造成影响.
+> 
+> 类似的思想与题目
+> 
+> - [[Binary Index Tree - BIT#离线解题技巧]]
+
+**官方做法**
+
+#combinatorics/complementary_set
+
+答案将等于
+
+$$
+\begin{aligned}
+&\sum_{i=1}^N\sum_{j=i}^N\sum_{k=1}^N[(A_i,...,A_j)包含k]\\[2ex]
+=&\sum_{k=1}^{N}\sum_{i=1}^N\sum_{j=i}^N[(A_i,...,A_j)包含k]\\[2ex]
+=&\sum_{k=1}^{N}包含k的(A_i,...,A_j)的数量\\[2ex]
+=&\sum_{k=1}^{N}\left(子序列总数-不包含k的(A_i,...,A_j)的数量\right)
+\end{aligned}
+$$
+
+设 $A_x=k$ 中的 $x$ 从小到大为 $x_1,x_2,...x_{C_k}$ 其中 $C_k$ 为 $k$ 的个数，不包含 $k$ 的 $(A_i,...,A_j)$ 的数量为 $cnt(0,x_1)+cnt(x_1,x_2)+\cdots+cnt(x_{C_k},N+1)$
+
+计算组合数 
+
+$$
+cnt(x_i,x_{i + 1}) = \binom{x_{i+1}-x_i - 1}{2} + x_{i+1}-x_i-1
+$$
+
+时间复杂度为 $O(1)$
+
+总复杂度为 $O(N)$
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> typedef long long ll;
+> const int maxn = 2e5;
+> ll N, a[maxn + 5];
+> ll ans, res, tot;
+> vector< ll > pos[maxn + 5];
+> 
+> int main()
+> {
+>     cin >> N;
+>     for(int i = 1;i <= N;i ++)
+>         pos[i].push_back(0);
+> 
+>     for(int i = 1;i <= N;i ++)
+>     {
+>         cin >> a[i];
+>         pos[a[i]].push_back(i);
+>     }
+>     
+>     for(int i = 1;i <= N;i ++)
+>         pos[i].push_back(N + 1);
+> 
+>     tot = N * (N - 1) / 2 + N;
+> 
+>     for(int i = 1;i <= N;i ++)
+>     {
+>         res = 0;
+>         for(int j = 1;j < pos[i].size();j ++)
+>         {
+>             res = res + (pos[i][j] - pos[i][j - 1] - 1) * (pos[i][j] - pos[i][j - 1] - 2) / 2 + (pos[i][j] - pos[i][j - 1] - 1);
+>         }
+>         ans += (tot - res);
+>     }
+> 
+>     cout << ans << endl;
+>     return 0;
+> }
+> ```
+
+
+---
+
 ## ABC370
 #### [A - Raise Both Hands (atcoder.jp)](https://atcoder.jp/contests/abc370/tasks/abc370_a)
 
