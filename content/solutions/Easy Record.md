@@ -5,6 +5,79 @@ tags:
   - solution
 ---
 
+## ABC372
+
+#### [A - delete . (atcoder.jp)](https://atcoder.jp/contests/abc372/tasks/abc372_a)
+
+删除字符串中的 `.`
+
+#### [B - 3^A (atcoder.jp)](https://atcoder.jp/contests/abc372/tasks/abc372_b)
+
+#greedy #binary-search 
+
+给一个整数 $M$ ，求一个长度为 $N$ 的序列 $A=(A_1,A_2,...,A_N)$，满足
+
+- $1\leq N \leq 20$
+- $0\leq A_i \leq 10\,(1\leq i \leq M)$
+- $\sum 3^{A_i} = M$
+
+$1\leq M \leq 10^5$
+
+贪心. 二分先找最大的小于 $M$ 的 $3^{A_i}$ 然后从大到小减即可.
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> int M;
+> int p[15], ans[25], N, pt;
+> 
+> int bisearch(int x)
+> {
+> 	int L = 0;int R = 10;int mid = 0;int res = -1;
+> 	for(;L <= R;)
+> 	{
+> 		mid = (L + R) >> 1;
+> 		if(p[mid] <= x)
+> 		{
+> 			res = mid;
+> 			L = mid + 1;
+> 		}
+> 		else R = mid - 1;
+> 	}
+> 	return res;
+> }
+> 
+> int main()
+> {
+> 	cin >> M;
+> 	p[0] = 1;
+> 	for(int i = 1;i <= 10;i ++) p[i] = p[i - 1] * 3;
+> 	if(M > p[10]) pt = 10;
+> 	else
+> 		pt = bisearch(M);
+> 	
+> 	for(int i = pt;i >= 0;i --)
+> 	{
+> 		for(;M >= p[i];)
+> 		{
+> 			N ++;
+> 			M -= p[i];
+> 			ans[N] = i;
+> 		}
+> 	}
+> 	
+> 	cout << N << endl;
+> 	for(int i = 1;i <= N;i ++)
+> 		cout << ans[i] << ' ';
+> 	
+> 	return 0;
+>  } 
+> ```
+
+
+---
  
 ## [Dashboard - Codeforces Round 971 (Div. 4) - Codeforces](https://codeforces.com/contest/2009)
  

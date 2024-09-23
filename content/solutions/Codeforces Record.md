@@ -4,24 +4,500 @@ draft: false
 tags:
   - solution
 ---
- 
+
+### 974 (Div. 3)
+
+#### [Problem - 2014B - Codeforces](https://codeforces.com/problemset/problem/2014/B)
+
+#math/classification 
+
+一棵树第 $i$ 年长出 $i^i$ 片新叶子. 一开始在第 1 年有 1 片叶子. 叶子最多存活 $k$ 年. 问第 $n$ 年树上的叶子是否是偶数.
+
+$1\leq t\leq 10^4$
+
+$1\leq n \leq 10^9, 1\leq k \leq n$
+
+奇数年长出奇数片叶子，偶数年长出偶数片叶子.
+
+第 $n$ 年存活的树叶是最后 $p=\min(n,k)$ 年长出来的树叶.
+
+- $n$ 为偶数
+	- $\left\lfloor\dfrac{p}{2}\right\rfloor$ 是奇数年的个数，如果为偶数，则总数为偶数，否则为奇数
+- $n$ 为奇数
+	- $\left\lceil\dfrac{p}{2}\right\rceil$ 是奇数年的个数，如果为偶数，则总数为偶数，否则为奇数
 
 
-- [ ] [Problem - 2004B - Codeforces](https://codeforces.com/problemset/problem/2004/B)
-- [ ] [Problem - 2004A - Codeforces](https://codeforces.com/problemset/problem/2004/A)
-- [ ] [Problem - 1997D - Codeforces](https://codeforces.com/problemset/problem/1997/D)
-- [ ] [Problem - 1997C - Codeforces](https://codeforces.com/problemset/problem/1997/C)
-- [ ] [Problem - 1997B - Codeforces](https://codeforces.com/problemset/problem/1997/B)
-- [ ] [Problem - 1997A - Codeforces](https://codeforces.com/problemset/problem/1997/A)
+#### [Problem - 2014C - Codeforces](https://codeforces.com/problemset/problem/2014/C)
+
+#binary-search 
+
+给一个数组 $a$ , 令其最大的一个元素 $a_j=a_j + x$.
+
+一个元素不满意意味着当其值严格小于数组平均值的一半.
+
+找到这个最小的 $x$ 使得超过一半元素不满意.
+
+$1\leq t \leq 10^4$
+
+$1\leq n \leq 2\cdot 10^5, 1\leq a_i \leq 10^6$
+
+二分套二分
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> typedef long long ll;
+> const ll inf = 1e12 + 5;
+> const int maxn = 2e5;
+> ll t, n, a[maxn + 5], sum;
+> ll L, R, mid, rr, half_n, ans;
+> 
+> int bisearch(ll x)
+> {
+>     int lt = 1;int rt = n - 1;int mm = 0;
+>     int res = 0;
+>     for(;lt <= rt;)
+>     {
+>         mm = (lt + rt) >> 1;
+>         if(2*n*a[mm] < sum + x)
+>         {
+>             res = mm;
+>             lt = mm + 1;
+>         }
+>         else rt = mm - 1;;
+>     }
+>     return res;
+> }
+> 
+> int main()
+> {
+>     cin >> t;
+>     for(int tt = 1;tt <= t;tt ++)
+>     {
+>         cin >> n;
+>         half_n = n/2;
+>         half_n ++;
+>         sum = 0;
+>         for(int i = 1;i <= n;i ++)
+>         {
+>             cin >> a[i];
+>             sum += a[i];
+>         }
+>         sort(a + 1,a + 1 + n);
+>         L = 0;R = inf;
+>         mid = 0;ans = -1;
+>         for(;L <= R;)
+>         {
+>             mid = (L + R) >> 1;
+>             rr = bisearch(mid);
+>             //cout << mid << ":" << rr << endl;
+>             if(rr >= half_n)
+>             {
+>                 ans = mid;
+>                 R = mid - 1;
+>             }
+>             else L = mid + 1;
+>         }
+>         cout << ans << endl;
+>     }
+>     return 0;
+> }
+> ```
+
+#### [Problem - 2014D - Codeforces](https://codeforces.com/problemset/problem/2014/D)
+
+#difference #2pointers
+
+Robin 要工作 $n$ 天. 访客可以连续访问 $d$ 天. Robin 有 $k$ 件事情要做，第 $i$ 件事情从 $l_i$ 天持续到 $r_i$ 天. 现在分别找出使得访问期间 Robin 要做的不同事情最多和最少的来访日.
+
+$1\leq t\leq 10^4$
+
+$1\leq n \leq 10^5, 1\leq d, k\leq n$
+
+准备两个数组，一个在每件事情开始的日子 $l_i$ 处 +1 ，另一个在每件事情结束后的日子 $r_i+1$ 处 +1.
+
+准备两个指针 $L$ 和 $R$ . 每当 $R$ 扫过事情开始的日子时，给答案加上先前在数组中记录的当天新开始的事情数量. 每当 $L$ 扫过事情结束后的日子时，给答案减去先前在数组中记录的结束的事情数量 .
+
+保持 $R - L + 1 = d$
+
+扫描一遍得解，时间复杂度 $O(n)$
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> const int inf = 1e6;
+> const int maxn = 2e5;
+> int t, n, d, k, l, r, L, R;
+> int cnt, pl[maxn + 5],mi[maxn + 5];
+> int maxa, mina, max_pos, min_pos, ans1, ans2;
+> 
+> int main()
+> {
+>     cin >> t;
+>     for(int tt = 1;tt <= t;tt ++)
+>     {
+>         cin >> n >> d >> k;
+>         for(int i = 1;i <= n;i ++) pl[i] = 0, mi[i] = 0;
+>         for(int i = 1;i <= k;i ++)
+>         {
+>             cin >> l >> r;
+>             pl[l] ++;
+>             mi[r + 1] ++;
+>         }
+>         maxa = -1;mina = inf;
+>         cnt = 0;
+>         L = 1;R = 1;
+>         for(;R < d;R ++)
+>             if(pl[R] > 0)
+>                 cnt += pl[R];
+>         for(;R <= n;L ++, R ++)
+>         {
+>             if(pl[R] > 0)
+>                 cnt += pl[R];
+>             if(mi[L] > 0)
+>                 cnt -= mi[L];
+>             if(cnt > maxa)
+>             {
+>                 maxa = cnt;
+>                 max_pos = L;
+>             }
+>             if(cnt < mina)
+>             {
+>                 mina = cnt;
+>                 min_pos = L;
+>             }
+>         }
+>         cout << max_pos << ' ' << min_pos << endl;
+>     }
+>     return 0;
+> }
+> ```
+
+#### [Problem - 2014E - Codeforces](https://codeforces.com/problemset/problem/2014/E)
+
+#graph/shortest-path #graph/shortest-path/layer 
+
+有一张无向图，$n$ 个点 $m$ 条边，每条边都有对应的时间花费. 另外还有 $h$ 匹马，这 $h$ 匹马分别在不同的节点上，一旦骑上马，就不能下马，骑马通过的边是正常时间花费的一半.
+
+A 从 1 出发，B 从 $n$ 出发，问他们最快什么时候可以相遇.
+
+$1\leq t\leq 10^4$
+
+$2\leq n\leq 2\cdot 10^5,1\leq m\leq 2\cdot 10^5, 1\leq h\leq n$
+
+$2\leq w_i \leq 10^6$
+
+如果没有马，那就跑两次最短路，分别得到最短时间花费 $f,g$ ，然后枚举相遇点取 $\min_i\{\max(f(i),g(i))\}$ 即为答案.
+
+但是本题有马，也就是说在图上，我们有两种状态，一种是没有骑马，另一种是骑了马. 我们要给图分层，然后在跑最短路. 在某些情况下，可能先去骑马，然后折返用时会更短，在普通设置下状态只有位置，由于无后效性（[[最短路#^48f2c9]]），普通的最短路不能正确计算. 分层图这一个过程就很像 DP. [[最短路#^e29c8b]]
+
+令 $f(i,0/1)$ 表示到位置 $i$ 不骑马/骑马的最短用时. $u\rightarrow v$ 的转移如下
+
+- 没有骑马
+	- $u$ 有马
+		- $f(u,0)\rightarrow f(v,1)$
+		- $f(u,0)\rightarrow f(v,0)$
+	- $u$ 没马
+		- $f(u,0)\rightarrow f(v,0)$
+- 骑着马
+	- $f(u,1)\rightarrow f(v,1)$
+
+
+同样取答案即可.
+
+时间复杂度：一次最短路 $O((2n+2m)\log 2m)$
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> typedef long long ll;
+> const ll inf = 1e15 + 5;
+> const int maxn = 2e5;
+> ll n, m, h, t, u, v, w;
+> bool horse[maxn + 5], vis[maxn + 5][2];
+> vector<pair<ll, ll> > G[maxn + 5];
+> ll f[maxn + 5][2], g[maxn + 5][2], ans;
+> 
+> 
+> void Dijkstra(int typ)
+> {
+>     if(typ)
+>     {
+>         for(int i = 1;i <= n;i ++) f[i][1] = f[i][0] = inf;
+>         f[1][0] = 0;
+>     }
+>     else
+>     {
+>         for(int i = 1;i <= n;i ++) g[i][1] = g[i][0] = inf;
+>         g[n][0] = 0;
+>     }
+>     // dis, now, sta
+>     priority_queue<pair<ll, pair<ll, ll> > > q;
+>     for(int i = 1;i <= n;i ++) vis[i][0] = vis[i][1] = 0;
+>     if(typ) q.push(make_pair(0,make_pair(1,0)));
+>     else q.push(make_pair(0,make_pair(n,0)));
+>     for(;!q.empty();)
+>     {
+>         int now = q.top().second.first;
+>         int sta = q.top().second.second;
+>         int nxtsta = 0;
+>         q.pop();
+>         if(vis[now][sta]) continue;
+>         vis[now][sta] = 1;
+>         for(int i = 0, dest = 0, ti = 0;i < G[now].size();i ++)
+>         {
+>             dest = G[now][i].first;
+>             ti = G[now][i].second;
+>             if(sta == 1)
+>             {
+>                 ti = ti/2;
+>                 nxtsta = 1;
+>                 if(typ)
+>                 {
+>                     if(f[now][sta] + ti < f[dest][nxtsta])
+>                     {
+>                         f[dest][nxtsta] = f[now][sta] + ti;
+>                         q.push(make_pair(-f[dest][nxtsta],make_pair(dest,nxtsta)));
+>                     }
+>                 }
+>                 else{
+>                     if(g[now][sta] + ti < g[dest][nxtsta])
+>                     {
+>                         g[dest][nxtsta] = g[now][sta] + ti;
+>                         q.push(make_pair(-g[dest][nxtsta],make_pair(dest,nxtsta)));
+>                     }
+>                 }
+>             }
+>             else
+>             {
+>                 nxtsta = 0;
+>                 if(typ)
+>                 {
+>                     if(f[now][sta] + ti < f[dest][nxtsta])
+>                     {
+>                         f[dest][nxtsta] = f[now][sta] + ti;
+>                         q.push(make_pair(-f[dest][nxtsta],make_pair(dest,nxtsta)));
+>                     }
+>                 }
+>                 else{
+>                     if(g[now][sta] + ti < g[dest][nxtsta])
+>                     {
+>                         g[dest][nxtsta] = g[now][sta] + ti;
+>                         q.push(make_pair(-g[dest][nxtsta],make_pair(dest,nxtsta)));
+>                     }
+>                 }
+>                 if(horse[now] == 1)
+>                 {
+>                     nxtsta = 1;
+>                     ti = ti/2;
+>                     if(typ)
+>                     {
+>                         if(f[now][sta] + ti < f[dest][nxtsta])
+>                         {
+>                             f[dest][nxtsta] = f[now][sta] + ti;
+>                             q.push(make_pair(-f[dest][nxtsta],make_pair(dest,nxtsta)));
+>                         }
+>                     }
+>                     else{
+>                         if(g[now][sta] + ti < g[dest][nxtsta])
+>                         {
+>                             g[dest][nxtsta] = g[now][sta] + ti;
+>                             q.push(make_pair(-g[dest][nxtsta],make_pair(dest,nxtsta)));
+>                         }
+>                     }
+>                 }
+>             }
+>         }
+>     }
+>     return ;
+> }
+> 
+> int main()
+> {
+>     cin >> t;
+>     for(int tt = 1;tt <= t;tt ++)
+>     {
+>         for(int i = 1;i <= n;i ++) horse[i] = 0;
+>         for(int i = 1;i <= n;i ++) G[i].clear();
+>         cin >> n >> m >> h;
+>         for(int i = 1;i <= h;i ++)
+>         {
+>             cin >> u;
+>             horse[u] = 1;
+>         }
+>         for(int i = 1;i <= m;i ++)
+>         {
+>             cin >> u >> v >> w;
+>             G[u].push_back(make_pair(v,w));
+>             G[v].push_back(make_pair(u,w));
+>         }
+> 
+>         Dijkstra(0);
+>         Dijkstra(1);
+> 
+>         ans = inf;
+>         for(int i = 1;i <= n;i ++)
+>         {
+>             ll tmp1 = max(f[i][1],g[i][1]);
+>             ll tmp2 = max(f[i][0],g[i][0]);
+>             ll tmp3 = max(f[i][0],g[i][1]);
+>             ll tmp4 = max(f[i][1],g[i][0]);
+>             ans = min(ans,min(tmp1,min(tmp2,min(tmp3,tmp4))));
+>         }
+> 
+>         if(ans == inf) ans = -1;
+>         cout  << ans << endl;
+> 
+>     }
+>     return 0;
+> }
+> ```
+
+不过话说有没有可能两个人都要去同一个地方取马然后出现实际上一个人骑了马，另一个没有骑马的情况呢. 这似乎是不可能的. 先到的直接奔着另一个的路上去即可.
+
+
+---
+
+### 973 (Div. 2)
+
+#### [Problem - 2013A - Codeforces](https://codeforces.com/problemset/problem/2013/A)
+
+有 $n$ 个水果. 搅拌机 1s 最多可以搅拌 $x$ 个水果. Zhan 1s 可以最多将 $y$ 个水果放进搅拌机.搅拌完成的水果会立刻拿出搅拌机不耗时. 问最快要多少秒搅拌完这 $n$ 个水果.
+
+$$
+ans = \left\lceil\dfrac{n}{\min(x,y)}\right\rceil
+$$
+
+
+#### [Problem - 2013B - Codeforces](https://codeforces.com/problemset/problem/2013/B)
+
+#greedy #math #property 
+
+进行 $n-1$ 次操作，每次操作选下标为 $i,j\,(1\leq i < j \leq n)$ 的数，删掉 $a_i$ ，令 $a_j = a_j - a_i$.
+
+求最终剩下的数最大是多少.
+
+答案总可以写成
+
+$$
+ans = a_n - K
+$$
+让 $K$ 尽可能小，可以贪心
+
+$$
+K = a_{n - 1}-a_{n-2}-\cdots-a_2-a_1
+$$
 
 
 
+#### [Problem - 2013C - Codeforces](https://codeforces.com/problemset/problem/2013/C)
+
+#interactive #construction #string 
+
+现在有一串密码，只由 0 和 1 组成. 告诉你字符串的长度为 $n$ ，接下来你有两种操作
+
+- `? s` 询问 $s$ 是否为密码的子串.
+- `! s` 回答密码
+
+在 $2n$ 次询问以内找到密码.
+
+我们可以一个字符一个字符地猜.
+
+先随便猜 0 或 1. 然后在这一个字符的基础上，往右加字符，直到猜 0 和猜 1 都不对，这就意味着不能再往右边加字符了，这个时候开始往左边加字符.
+
+这个时候，只要猜加 0 就可以了，如果询问得到肯定回答那么这就是正确的字符串. 如果得到否定的回答，显然只能加 1 了，就不要再猜 1 了.
+
+同时还要注意自己正在猜的字符串的长度，一旦长度到了 $n$ 就没有必要继续询问了.
+
+这样最多确实只需要 $2n$ 次询问.
 
 
-### [Problem - 2008C - Codeforces](https://codeforces.com/problemset/problem/2008/C)
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> int t, n, cnt;
+> string gue, ans;
+> 
+> int ask(string str)
+> {
+>     cout << "? " << str << endl;
+>     cout.flush();
+>     int res = 0;
+>     cin >> res;
+>     return res;
+> }
+> 
+> int main()
+> {
+>     cin >> t;
+>     for(int tt = 1;tt <= t;tt ++)
+>     {
+>         cin >> n;
+>         gue = "";
+>         ans = "";
+>         cnt = 0;
+>         for(;cnt < n;)
+>         {
+>             gue = ans + "0";
+>             if(ask(gue))
+>             {
+>                 ans = gue;
+>                 cnt ++;
+>             }
+>             else
+>             {
+>                 gue = ans + "1";
+>                 if(ask(gue))
+>                 {
+>                     ans = gue;
+>                     cnt ++;
+>                 }
+>                 else
+>                 {
+>                     break;
+>                 }
+>             }
+>         }
+>         for(;cnt < n;)
+>         {
+>             gue = "0" + ans;
+>             if(ask(gue))
+>             {
+>                 ans = gue;
+>                 cnt ++;
+>             }
+>             else
+>             {
+>                 ans = "1" + ans;
+>                 cnt ++;
+>             }
+>             
+>         }
+>         cout << "! " << ans << endl;
+>         cout.flush();
+>     }
+>     return 0;
+> }
+> ```
+
+
+
+---
+
+### 970 (Div. 3)
+#### [Problem - 2008C - Codeforces](https://codeforces.com/problemset/problem/2008/C)
 #math #binary-search #brute-force 
 
 定义好序列：
+
 - $a_{i - 1} < a_i,\forall 2\leq i \leq n$
 - $a_{i} - a_{i - 1} <a_{i + 1} - a_i,\forall 2\leq i\leq n$
 
@@ -75,7 +551,8 @@ $$
 > ```
 
 
-### [Problem - 2008D - Codeforces](https://codeforces.com/problemset/problem/2008/D)
+#### [Problem - 2008D - Codeforces](https://codeforces.com/problemset/problem/2008/D)
+
 #graph #combinatorics/permutation
 
 在一个排列 $p$ 中，称从 $i$ 可达 $j$ 当且仅当进行若干次 $i=p_i$ 迭代后 $i=j$. 每个排列中的数字要么被涂成黑色，要么被涂成白色. 令 $F(i)$ 表示从 $i$ 可达的黑色数字数量. 求所有 $F(i)$.
@@ -135,12 +612,14 @@ $1\leq t\leq 10^4,1\leq n\leq 2\cdot 10^5,1\leq p_i\leq n$
 > 	return 0;
 > }
 > ```
-### [Problem - 2008E - Codeforces](https://codeforces.com/problemset/problem/2008/E)
+#### [Problem - 2008E - Codeforces](https://codeforces.com/problemset/problem/2008/E)
+
 #dp #string #greedy 
 
 交替字符串定义：奇数位字符相同，偶数位字符相同，长度为偶数
 
 给一个字符串，通过下面 2 种操作将其变为交替字符串：
+
 - 删掉其中一个字符，只能用 1 次
 - 用任意字符替换其中一个字符，可以使用任意次
 
@@ -151,6 +630,7 @@ $1\leq t\leq 10^4,1\leq n \leq 2\cdot 10^5$
 考虑给定的字符串为偶数位，那么不需要删除操作，只需替换操作. 贪心，奇数位上出现次数最多的作为最终的奇数位字符，偶数位上同理，将其他字符替换为这两种字符即可. 用了排序复杂度 $O(n\log n)$.
 
 考虑给定的字符串为奇数位，必须用一次删除操作，但是在哪个位置删除不确定，如果枚举删除位置复杂度 $O(n^2)$ . 考虑别的办法. 每个位置都有删除和不删除两种选择，考虑 DP ，设 $f(i,a,b,0/1,0/1)$ 表示奇数位为 $a$ ，偶数位为 $b$ ，处理前 $i$ 个字符，第 $i$ 个字符作为偶数位/奇数位，没有使用/使用了删除操作的最小操作数. 转移如下：
+
 - $i$ 为奇数
 	- $f(i,a,b,1,0) = f(i - 1,a,b,0,0) + [s_i = a]$
 	- $f(i,a,b,0,1) = \min\left(f(i-1,a,b,0,0)+1,f(i-1,a,b,1,1)+[s_i=b]\right)$
@@ -255,7 +735,8 @@ $1\leq t\leq 10^4,1\leq n \leq 2\cdot 10^5$
 > }
 > ```
 
-### [Problem - 2008F - Codeforces](https://codeforces.com/problemset/problem/2008/F)
+#### [Problem - 2008F - Codeforces](https://codeforces.com/problemset/problem/2008/F)
+
 #probabilty/expectation #combinatorics #math #prefix_sum 
 
 盒子里有 $n$ 个小球，每个小球都有自己的价值，求从盒子里随机取两个小球的价值乘积的期望.
@@ -265,14 +746,17 @@ $1\leq t\leq 10^4,2\leq n\leq 2\cdot 10^5,0\leq a_i\leq 10^9$
 $$
 \dfrac{1}{tot}\sum_{i=1}^n\sum_{j=i+1}^na_ia_j
 $$
+
 $tot = \binom{n}{2}$
 
 时间复杂度 $O(n^2)$
 
 变换一下，得到
+
 $$
 \dfrac{1}{tot} \sum_{i=1}^n a_i\sum_{j = i + 1}^n a_j
 $$
+
 可以用前缀和预处理，时间复杂度降为 $O(n)$
 
 > [!code]- Code
@@ -318,7 +802,12 @@ $$
 > }
 > ```
 
-### [Problem - 2004D - Codeforces](https://codeforces.com/problemset/problem/2004/D)
+
+---
+
+
+#### [Problem - 2004D - Codeforces](https://codeforces.com/problemset/problem/2004/D)
+
 - [x] [Problem - 2004D - Codeforces](https://codeforces.com/problemset/problem/2004/D)
 
 #binary-search #math/classification #greedy 
@@ -335,82 +824,82 @@ $x,y$ 不可以互相抵达时，尝试寻找中介. 在考虑中介的时候，
 
 其次就是最靠近 $x$ 或最靠近 $y$ .
 
-```cpp
-#include<bits/stdc++.h>
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> const int inf = 1e9 + 7;
+> const int maxn = 2e5;
+> int t, n, q, ty[maxn + 5], x, y, mid, ans;
+> string pt[maxn + 5];
+> // 1   2   3    4   5   6
+> // BG, BR, BY, GR, GY, RY
+> vector< int > med[10];
+> string di[10] = {"","BG", "BR", "BY", "GR", "GY", "RY"};
+> 
+> int main()
+> {
+> 	cin >> t;
+> 	for(int tt = 1;tt <= t;tt ++)
+> 	{
+> 		cin >> n >> q;
+> 		for(int i = 1;i <= 6;i ++) med[i].clear();
+> 		for(int i = 1;i <= n;i ++)
+> 		{
+> 			cin >> pt[i];
+> 			for(int j = 1;j <= 6;j ++)
+> 				if(pt[i] == di[j])
+> 				{
+> 					ty[i] = j;
+> 					break;
+> 				}
+> 			med[ty[i]].push_back(i);
+> 		}
+> 		
+> 		for(int qq = 1;qq <= q;qq ++)
+> 		{
+> 			cin >> x >> y;
+> 			if(pt[x][0] == pt[y][0] || pt[x][0] == pt[y][1] || pt[x][1] == pt[y][0] || pt[x][1] == pt[y][1])
+> 				cout << abs(x - y) << endl;
+> 			else
+> 			{
+> 				mid = (x + y) >> 1;
+> 				ans = inf;
+> 				for(int i = 1;i <= 6;i ++)
+> 				{
+> 					if((pt[x][0] == di[i][0] || pt[x][0] == di[i][1] || pt[x][1] == di[i][0] || pt[x][1] == di[i][1])&&(pt[y][0] == di[i][0] || pt[y][0] == di[i][1] || pt[y][1] == di[i][0] || pt[y][1] == di[i][1]))
+> 					{
+> 					    auto lb = lower_bound(med[i].begin(),med[i].end(),x);
+> 					    if(lb != med[i].end()) ans = min(abs(x - *lb) + abs(y - *lb), ans);
+> 					    if(lb != med[i].begin())
+> 					    {
+> 					        lb --;
+> 					        ans = min(abs(x - *lb) + abs(y - *lb), ans);
+> 					    }
+> 					    lb = lower_bound(med[i].begin(),med[i].end(),y);
+> 					    if(lb != med[i].end()) ans = min(abs(x - *lb) + abs(y - *lb), ans);
+> 					    if(lb != med[i].begin())
+> 					    {
+> 					        lb --;
+> 					        ans = min(abs(x - *lb) + abs(y - *lb), ans);
+> 					    }
+> 					}
+> 				}
+> 				if(ans == inf) cout << -1 << endl;
+> 				else cout << ans << endl;
+> 			}
+> 		}
+> 		
+> 	}
+> 	return 0;
+> }
+> ```
 
-using namespace std;
-const int inf = 1e9 + 7;
-const int maxn = 2e5;
-int t, n, q, ty[maxn + 5], x, y, mid, ans;
-string pt[maxn + 5];
-// 1   2   3    4   5   6
-// BG, BR, BY, GR, GY, RY
-vector<int > med[10];
-string di[10] = {"","BG", "BR", "BY", "GR", "GY", "RY"};
 
-int main()
-{
-	cin >> t;
-	for(int tt = 1;tt <= t;tt ++)
-	{
-		cin >> n >> q;
-		for(int i = 1;i <= 6;i ++) med[i].clear();
-		for(int i = 1;i <= n;i ++)
-		{
-			cin >> pt[i];
-			for(int j = 1;j <= 6;j ++)
-				if(pt[i] == di[j])
-				{
-					ty[i] = j;
-					break;
-				}
-			med[ty[i]].push_back(i);
-		}
-		
-		for(int qq = 1;qq <= q;qq ++)
-		{
-			cin >> x >> y;
-			if(pt[x][0] == pt[y][0] || pt[x][0] == pt[y][1] || pt[x][1] == pt[y][0] || pt[x][1] == pt[y][1])
-				cout << abs(x - y) << endl;
-			else
-			{
-				mid = (x + y) >> 1;
-				ans = inf;
-				for(int i = 1;i <= 6;i ++)
-				{
-					if((pt[x][0] == di[i][0] || pt[x][0] == di[i][1] || pt[x][1] == di[i][0] || pt[x][1] == di[i][1])&&(pt[y][0] == di[i][0] || pt[y][0] == di[i][1] || pt[y][1] == di[i][0] || pt[y][1] == di[i][1]))
-					{
-					    auto lb = lower_bound(med[i].begin(),med[i].end(),x);
-					    if(lb != med[i].end()) ans = min(abs(x - *lb) + abs(y - *lb), ans);
-					    if(lb != med[i].begin())
-					    {
-					        lb --;
-					        ans = min(abs(x - *lb) + abs(y - *lb), ans);
-					    }
-					    lb = lower_bound(med[i].begin(),med[i].end(),y);
-					    if(lb != med[i].end()) ans = min(abs(x - *lb) + abs(y - *lb), ans);
-					    if(lb != med[i].begin())
-					    {
-					        lb --;
-					        ans = min(abs(x - *lb) + abs(y - *lb), ans);
-					    }
-					}
-				}
-				if(ans == inf) cout << -1 << endl;
-				else cout << ans << endl;
-			}
-		}
-		
-	}
-	return 0;
-}
-```
-
-
-### [Problem - 2004C - Codeforces](https://codeforces.com/problemset/problem/2004/C)
+#### [Problem - 2004C - Codeforces](https://codeforces.com/problemset/problem/2004/C)
 
  - [x] [Problem - 2004C - Codeforces](https://codeforces.com/problemset/problem/2004/C)
-
 #greedy 
 
 有 $n$ 张牌，Alice 和 Bob 轮流取，Alice 先手，每人每轮取 1 张，每张牌上有一个分数 $a_i$ ，最终游戏分数记为二者得分之差 $A-B$. Alice 想让游戏分数尽可能大，Bob 则想让游戏分数尽可能小，二者都采取最优策略. 现在 Bob 可以作弊，只能增加某些牌的分数，而且增加的总分数不超过 $k$ ，问采取最优作弊策略，Bob 可以让游戏分数最小到多少.
@@ -425,103 +914,106 @@ $1\leq t\leq 5000, 2\leq n \leq 2\cdot 10^5,0\leq k\leq 10^9,1\leq a_i\leq 10^9$
 
 时间复杂度 $O(n\log n + n)$ （最复杂反而是排序...）
 
-```cpp
-#include<bits/stdc++.h>
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> const int maxn = 2e5;
+> int t, n, k, a[maxn + 5], d, A, B; 
+> int main()
+> {
+> 	cin >> t;
+> 	for(int tt = 1;tt <= t;tt ++)
+> 	{
+> 		cin >> n >> k;
+> 		for(int i = 1;i <= n;i ++)
+> 			cin >> a[i];
+> 		sort(a + 1,a + 1 + n);
+> 		A = 0;B = 0;
+> 		for(int i = n;i >= 2 && k > 0;i -= 2)
+> 		{
+> 			d = min(a[i] - a[i - 1],k);
+> 			a[i - 1] += d;
+> 			k -= d;			
+> 		}
+> 		for(int i = n;i >= 1;i -= 2)
+> 		{
+> 			A += a[i];
+> 			B += a[i - 1];
+> 		}
+> 		cout << A - B << endl;
+> 	}
+> 	return 0;
+> }
+> ```
 
-using namespace std;
-const int maxn = 2e5;
-int t, n, k, a[maxn + 5], d, A, B; 
-int main()
-{
-	cin >> t;
-	for(int tt = 1;tt <= t;tt ++)
-	{
-		cin >> n >> k;
-		for(int i = 1;i <= n;i ++)
-			cin >> a[i];
-		sort(a + 1,a + 1 + n);
-		A = 0;B = 0;
-		for(int i = n;i >= 2 && k > 0;i -= 2)
-		{
-			d = min(a[i] - a[i - 1],k);
-			a[i - 1] += d;
-			k -= d;			
-		}
-		for(int i = n;i >= 1;i -= 2)
-		{
-			A += a[i];
-			B += a[i - 1];
-		}
-		cout << A - B << endl;
-	}
-	return 0;
-}
-```
 
-
-### [Problem - 2002B - Codeforces](https://codeforces.com/problemset/problem/2002/B)
+#### [Problem - 2002B - Codeforces](https://codeforces.com/problemset/problem/2002/B)
 
 - [x] [Problem - 2002B - Codeforces](https://codeforces.com/problemset/problem/2002/B)
-
 #game 
 
 Alice 有一个 $n$ 排列 $[a_1,a_2,...,a_n]$ , Bob 也有一个 $n$ 排列 $[b_1,b_2,...b_n]$, 在每一轮游戏中，以下事件按顺序发生：
+
 - Alice 在她的数组中，取走第一个或最后一个
 - Bob 在他的数组中，取走第一个或最后一个
 
 游戏进行 $n-1$ 轮，最后 Alice 剩下 $x$ ，Bob 剩下 $y$ ，如果 $x=y$ 那么 Bob 获胜，否则 Alice 获胜. 如果两个人都以最优策略游戏，谁会获胜.
+
 $1\leq t\leq 10^4, 1\leq n\leq 3\cdot 10^5$
 
 需要从中发现规律. Alice 拿走一个数 $x$ 的时候，Bob 数组中的 $x$ 就没有用了，所以 Bob 应该尽早去掉自己数组中的 $x$ . 而在这个时候，如果 $x$ 不在 Bob 数组的第一个或最后一个，那么 Bob 就必须去掉一个不为 $x$ 的数 $y$ ，而这时候，如果 Alice 数组中还有 $y$ 那么 Alice 可以只留下 $y$ ，Bob 必败.
 所以只需要考察：Alice 的数组第一个和最后一个是否也在 Bob 的数组第一个或最后一个出现.
 
-```cpp
-#include<bits/stdc++.h>
-
-using namespace std;
-const int maxn = 3e5;
-int a[maxn + 5],b[maxn + 5];
-int n,la,ra,lb,rb;
-bool flag = 1;
-int t;
-
-int main()
-{
-    cin >> t;
-    for(int tt = 1;tt <= t;tt ++)
-    {
-        cin >> n;flag = 1;
-        for(int i = 1;i <= n;i ++) cin >> a[i];
-        for(int i = 1;i <= n;i ++) cin >> b[i];
-        la = 1;ra = n;lb = 1;rb = n;
-        for(int i = 1;i <= n;i ++)
-        {
-            if(a[la] != b[lb] && a[la] != b[rb])
-            {
-                flag = 0;break;
-            }
-            if(a[ra] != b[lb] && a[ra] != b[rb])
-            {
-                flag = 0;break;
-            }
-            if(a[la] == b[lb]) la ++,lb ++;
-            else
-            {
-                if(a[la] == b[rb]) la ++,rb --;
-                else
-                {
-                    if(a[ra] == b[lb]) ra --,lb ++;
-                    else
-                    {
-                        if(a[ra] == b[rb]) ra --,rb --;
-                    }
-                }
-            }
-        }
-        if(flag) cout << "Bob" << endl;
-        else cout << "Alice" << endl;
-    }
-        
-    return 0;
-}
-```
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> const int maxn = 3e5;
+> int a[maxn + 5],b[maxn + 5];
+> int n,la,ra,lb,rb;
+> bool flag = 1;
+> int t;
+> 
+> int main()
+> {
+>     cin >> t;
+>     for(int tt = 1;tt <= t;tt ++)
+>     {
+>         cin >> n;flag = 1;
+>         for(int i = 1;i <= n;i ++) cin >> a[i];
+>         for(int i = 1;i <= n;i ++) cin >> b[i];
+>         la = 1;ra = n;lb = 1;rb = n;
+>         for(int i = 1;i <= n;i ++)
+>         {
+>             if(a[la] != b[lb] && a[la] != b[rb])
+>             {
+>                 flag = 0;break;
+>             }
+>             if(a[ra] != b[lb] && a[ra] != b[rb])
+>             {
+>                 flag = 0;break;
+>             }
+>             if(a[la] == b[lb]) la ++,lb ++;
+>             else
+>             {
+>                 if(a[la] == b[rb]) la ++,rb --;
+>                 else
+>                 {
+>                     if(a[ra] == b[lb]) ra --,lb ++;
+>                     else
+>                     {
+>                         if(a[ra] == b[rb]) ra --,rb --;
+>                     }
+>                 }
+>             }
+>         }
+>         if(flag) cout << "Bob" << endl;
+>         else cout << "Alice" << endl;
+>     }
+>         
+>     return 0;
+> }
+> ```

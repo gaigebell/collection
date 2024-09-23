@@ -1,6 +1,368 @@
 [toc]
 
 
+## ABC372
+
+#### [C - Count ABC Again (atcoder.jp)](https://atcoder.jp/contests/abc372/tasks/abc372_c)
+
+#string #property 
+
+给你一个长度为 $N$ 的字符串 $S$ . 回答 $Q$ 次询问.
+
+第 $i$ 次询问形如下
+
+- 给一个整数 $X_i$ 和字符 $C_i$ ，将 $S$ 中第 $X_i$ 个字符替换成 $C_i$ . 然后输出现在 $S$ 中子串 `ABC` 的个数.
+
+$3\leq N \leq 2\times 10^5$
+
+$1\leq Q \leq 2\times 10^5$
+
+改变一个字符，只会影响 $[X_i - 2,X_i], [X_i-1,X_i+1],[X_i,X_i+2]$ 这 3 个区间. 
+
+先统计一遍 `ABC` 的个数，然后询问时考察这 3 个区间，对应修改答案即可.
+
+时间复杂度 $O(Q)$
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> const int maxn = 2e5;
+> int N, Q, ans, x;
+> string str;
+> char ch[maxn + 5], cc;
+> 
+> int main()
+> {
+> 	cin >> N >> Q;
+> 	cin >> str;
+> 	for(int i = 0;i < str.size();i ++)
+> 		ch[i + 1] = str[i];
+> 	for(int i = 1;i + 2 <= N;i ++)
+> 		if(ch[i] == 'A' && ch[i + 1] == 'B' && ch[i + 2] == 'C')
+> 			ans ++;
+> 	for(int qq = 1;qq <= Q;qq ++)
+> 	{
+> 		cin >> x >> cc;
+> 		if(x > 2)
+> 		{
+> 			if(ch[x - 2] == 'A' && ch[x - 1] == 'B')
+> 			{
+> 				if(cc != 'C' && ch[x] == 'C') ans --;
+> 				else
+> 				{
+> 					if(cc == 'C' && ch[x] != 'C') ans ++;
+> 				}
+> 			}
+> 		}
+> 		if(x + 2 <= N)
+> 		{
+> 			if(ch[x + 1] == 'B' && ch[x + 2] == 'C')
+> 			{
+> 				if(cc != 'A' && ch[x] == 'A') ans --;
+> 				else
+> 				{
+> 					if(cc == 'A' && ch[x] != 'A') ans ++;
+> 				}
+> 			}
+> 		}
+> 		if(x > 1 && x < N)
+> 		{
+> 			if(ch[x - 1] == 'A' && ch[x + 1] == 'C')
+> 			{
+> 				if(cc != 'B' && ch[x] == 'B') ans --;
+> 				else
+> 					if(cc == 'B' && ch[x] != 'B') ans ++;
+>  			}
+> 		}
+> 		ch[x] = cc;
+> 		cout << ans << endl;
+> 	}
+> 	return 0;
+> }
+> ```
+
+
+#### [D - Buildings (atcoder.jp)](https://atcoder.jp/contests/abc372/tasks/abc372_d)
+
+#ds/segment_tree 
+
+有 $N$ 个建筑排成一排，第 $i$ 个建筑高 $H_i$
+
+对于每个 $i$ 找到满足以下条件的 $j\,(i < j\leq N)$ 的个数
+
+- $i,j$ 之间没有建筑比 $j$ 高.
+
+$1\leq N \leq 2\times 10^5$
+
+$1\leq H_i \leq N$
+
+$H_i \neq H_j (i \neq j)$
+
+考虑某栋大楼 $j$ 对其他大楼答案的贡献. $j$ 对其后面的大楼没有贡献，只对其前面的大楼有贡献. 
+
+$j$ 只对其前面比它矮的大楼有贡献，直到碰到一个比它高的大楼，就不再对更前面的大楼产生贡献.
+
+于是 $j$ 会对一个区间的大楼的答案产生 +1 的贡献. 我们只需要找到在它前面第一个比它高的大楼.
+
+使用权值线段树，大楼高度作为定义域，位置作为值域. 从前往后枚举大楼，先查询其高度以上的最大的位置在哪，然后用差分标记或线段树记录答案. 接着再将当前大楼加入权值线段树.
+
+时间复杂度 $O(N\log N)$
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> const int maxn = 2e5;
+> int N, h[maxn + 5], pre[maxn + 5],ans[maxn + 5];
+> int tr[(maxn << 2) + 5];
+> 
+> int lson(int x)
+> {
+> 	return x<<1;
+> }
+> 
+> int rson(int x)
+> {
+> 	return lson(x) + 1;
+> }
+> 
+> void Modify(int k,int L,int R,int pos,int val)
+> {
+> 	if(L > pos || R < pos) return ;
+> 	if(L == pos && L == R)
+> 	{
+> 		tr[k] = val;
+> 		return ;
+> 	}
+> 	int mid = (L + R) >> 1;
+> 	Modify(lson(k),L,mid,pos,val);
+> 	Modify(rson(k),mid + 1,R,pos,val);
+> 	tr[k] = max(tr[lson(k)],tr[rson(k)]);
+> 	return ;
+> }
+> 
+> int Query(int k,int L,int R,int l,int r)
+> {
+> 	if(L > r || R < l) return 0;
+> 	if(l <= L && R <= r) return tr[k];
+> 	int mid = (L + R) >> 1;
+> 	int res = max(Query(lson(k),L,mid,l,r),Query(rson(k),mid + 1,R,l,r));
+> 	return res;
+> }
+> 
+> int main()
+> {
+> 	cin >> N;
+> 	for(int i = 1;i <= N;i ++)
+> 		cin >> h[i];
+> 	Modify(1,1,N+1,N+1,1);
+> 	for(int i = 2,j = 0;i <= N;i ++)
+> 	{
+> 		j = Query(1,1,N+1,h[i],N+1);
+> 		pre[j] ++;
+> 		pre[i] --;
+> 		Modify(1,1,N+1,h[i],i);
+> 	}
+> 	for(int i = 1;i <= N;i ++)
+> 		ans[i] = ans[i - 1] + pre[i];
+> 		
+> 	for(int i = 1;i <= N;i ++)
+> 		cout << ans[i] << ' ';
+> 	return 0;
+> }
+> ```
+
+#### [E - K-th Largest Connected Components (atcoder.jp)](https://atcoder.jp/contests/abc372/tasks/abc372_e)
+
+#ds/dsu 
+
+有一张无向图，其中有 $N$ 个点，但是没有边.
+
+给你 $Q$ 个询问，询问如下：
+
+- 类型 1 格式 `1 u v`. 在 $u$ 和 $v$ 之间加 1 条边.
+- 类型 2 格式 `2 u k`. 输出与 $u$ 联通的所有点中，第 $k$ 大的点. 如果少于 $k$ 个点，输出 -1
+
+$1\leq N, Q\leq 2\times 10^5$
+
+类型 1 $1\leq u < v \leq N$
+
+类型 2 $1\leq v \leq N, 1\leq k \leq 10$
+
+一个值得关注的点，在于数据范围 $1\leq k \leq 10$ . 也就是说，我们只需要维护一个连通块里面排名前 10 的点就可以了.
+
+这里不必用图联通算法，使用并查集就可以确定节点在哪个连通块中.
+
+当两个连通块合并的时候，两边排名前 10 的点组成的一定合并后排名前 20 的点，暴力排序后去掉最后 10 个，留下最大的 10 个即可.
+
+时间复杂度: 合并 $O(N + 20\log 20)$ 路径压缩后时间复杂度更小一些, 回答 $O(1)$
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> const int maxn = 2e5;
+> int N, Q, ty, u, v;
+> int fa[maxn + 5];
+> vector< int > big[maxn + 5];
+> 
+> int findx(int x)
+> {
+>     if(fa[x] != x) fa[x] = findx(fa[x]);
+>     return fa[x];
+> }
+> 
+> bool judge(int x,int y)
+> {
+>     x = findx(x);
+>     y = findx(y);
+>     return x == y;
+> }
+> 
+> void joint(int x,int y)
+> {
+>     x = findx(x);
+>     y = findx(y);
+>     fa[y] = x;
+>     return ;
+> }
+> 
+> bool cmp(int x,int y)
+> {
+>     return x > y;
+> }
+> 
+> int main()
+> {
+>     cin >> N >> Q;
+>     for(int i = 1;i <= N;i ++)
+>     {
+>         fa[i] = i;
+>         big[i].push_back(i);
+>     }
+>     for(int qq = 1;qq <= Q;qq ++)
+>     {
+>         cin >> ty;
+>         if(ty == 1)
+>         {
+>             cin >> u >> v;
+>             if(!judge(u,v))
+>             {
+>                 int fu = findx(u);
+>                 int fv = findx(v);
+>                 for(int i = 0;i < big[fv].size();i ++)
+>                     big[fu].push_back(big[fv][i]);
+>                 sort(big[fu].begin(),big[fu].end(),cmp);
+>                 for(;big[fu].size() > 10;) big[fu].pop_back();
+>                 big[fv].clear();
+>                 joint(u,v);
+>             }
+>         }
+>         else{
+>             cin >> u >> v;
+>             int fu = findx(u);
+>             //cout << "it belogs to " << fu << endl;
+>             if(big[fu].size() < v) cout << -1 << endl;
+>             else cout << big[fu][v - 1] << endl;
+>         }
+>     }
+>     return 0;
+> }
+> ```
+
+
+
+#### [F - Teleporting Takahashi 2 (atcoder.jp)](https://atcoder.jp/contests/abc372/tasks/abc372_f)
+
+#graph #dp #optimization #key 
+
+有一张有向图 $G$ , 有 $N$ 个顶点和 $N + M$ 条边，其中 $i$ 和 $i + 1$ （包含 $N$ 和 $1$）之间都有一条边. 剩下的 $M$ 条边从 $X_i$ 指向 $Y_i$ . Takahashi 在顶点 1 ，每次可以走 1 条边，问走了恰好 $K$ 次有多少种不同的走法.
+
+$2\leq N \leq 2\times 10^5$
+
+$0\leq M \leq 50$
+
+$1\leq K \leq 2\times 10^5$
+
+所有边各不相同
+
+值得注意的是 $M\leq 50$. 考虑怎么利用这个条件.
+
+**inline DP**
+
+官方给了一种 inline DP 的做法. 大致意思就是，走到第 $i$ 个点的方案数 $f(i)$ 一定会贡献给 $f(i+1)$. 可以直接移动下标就不用对 $f$ 重新赋值了. 
+
+那么这样的话，我们首先需要一个长度 $N+K$ 的 $f$.
+
+从 $K + 1$ 开始，$[K+1,N+K]$ 这一段代表了初始的 $[1,N]$ 的 $f$ . 那么 $f(K + 1) = 1$ . 接着由于 $f(i)$ 要贡献给 $f(i + 1)$ . 我们直接取 $[K,N+K-1]$ 的 $f$ 代表走了 1 次的各个顶点的方案数. 这样以此类推， $[K + 1 - i,N + K - i]$ 表这一段的 $f$ 表示走了 $i$ 次的各个顶点的方案数.
+
+至于另外 $M$ 条边产生的贡献，先记录下来到 $g$，然后分别加到下一轮对应下标的 $f$ 处便可完成转移. 这样 DP 的时间复杂度只有 $O(MK)$
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> typedef long long ll;
+> const int maxn = 2e5;
+> const ll modn = 998244353;
+> int N, M, K;
+> ll f[maxn + maxn + 5], ans = 0;
+> int ex_x[55], ex_y[55];
+> map<int, ll> g;
+> 
+> 
+> int main()
+> {
+>     cin >> N >> M >> K;
+>     for(int i = 1;i <= M;i ++)
+>         cin >> ex_x[i] >> ex_y[i];
+>     M ++;
+>     ex_x[M] = N;ex_y[M] = 1;
+>     f[K + 1] = 1ll;
+>     for(int i = K + 1;i > 1;i --)
+>     {
+>         for(int j = 1, u = 0, v = 0;j <= M;j ++)
+>         {
+>             u = i + ex_x[j] - 1;
+>             v = ex_x[j];
+>             g[v] = f[u];
+>         }
+>         for(int j = 1, u = 0, v = 0;j <= M;j ++)
+>         {
+>             u = ex_x[j];
+>             v = i - 1 + ex_y[j] - 1;
+>             f[v] = (f[v]%modn + g[u]%modn)%modn;
+>         }
+>     }
+>     for(int i = 1;i <= N;i ++)
+>         ans = (ans%modn + f[i]%modn)%modn;
+>     cout << ans%modn << endl;
+>     return 0;
+> }
+> ```
+
+**contract graph**
+
+官方还给了另一种做法，就是将度数为 2 的点全部去掉，相当于压缩单向无分叉的路径. 
+
+因为在没有分叉的点 $f(i)$ ，只是负责将 $f(i-1)$ 传递给 $f(i + 1)$ ，一定有 $f(i) = f(i - 1)$.
+
+那么这样的话，剩下的最多也就只有 100 条边. 时间复杂度应该是 $O(2MK)$
+
+> [!important] Key
+> 
+> - 利用条件 $M\leq 50$
+> - 循环轮换的性质怎么利用
+> - 开开眼界
+
+
+---
+
 ## ABC371
 
 #### [A - Jiro (atcoder.jp)](https://atcoder.jp/contests/abc371/tasks/abc371_a)
