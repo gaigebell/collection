@@ -3,6 +3,7 @@ title: Binary Index Tree - BIT
 draft: false
 tags:
   - ds/binary_index_tree
+  - "#material"
 ---
  
 
@@ -22,8 +23,7 @@ tags:
 
 支持单点修改和区间查询。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/8a2a7cce51684c508add13eaaf51d5a2.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2JlbGwwNDEwMzA=,size_16,color_FFFFFF,t_70#pic_center)
-
+![[Pasted image 20240927172010.png]]
 
 ## 基础操作
 
@@ -204,9 +204,7 @@ $$
 
 以上式子还要慢慢理解。这里再放出一张图，用于理解二阶前缀和的变化，也就是 $g(x)$ 的变化，至于 $h(x)$ 的变化，确实需要一定的数学功底与思维能力理解（这几条式子我也推了很久，推了 2h ，而且有几次推错了，甚至有几次多项式相乘展开都算错了，我数学太菜了...）
 
-![4062（1）](C:\Users\47328\Desktop\信息学\notes\4062（1）.png)
-
-
+![[4062（1）.png]]
 
 综上所述，我们就可以将记录一种数出现的所有位置，然后将原序列简化为仅包含 0 和 1 的序列，维护一下 $h(x)$ 并统计答案，逐个击破即可。最后要注意的就是不要傻傻地将负数作为下标了，设置一个偏移量 $\Delta$ 就可以避免数组越界地情况。时间复杂度 $O(n\log n)$
 
@@ -370,7 +368,8 @@ $$
 \end{cases}
 $$
 通过研究几个例子可以发现，使距离最小的交换次数就是序列中关于以上二维偏序的逆序对的个数。
-![在这里插入图片描述](https://img-blog.csdnimg.cn/b323c73cc8934e6db1be6daa8dbadd41.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2JlbGwwNDEwMzA=,size_16,color_FFFFFF,t_70#pic_center)
+
+![[Pasted image 20240927172054.png]]
 
 先将 $a$ 和 $b$ 排序，然后给每个数一个自己序列内的排名，然后以任意一维作为关键字排序，然后就是做逆序对的操作。
 
@@ -403,7 +402,7 @@ for(int i = 1;i <= n;i ++)
 
 可以轻易发现，仍然是求逆序对的个数，但是这次不在序列上，而是在树上。考虑将树转化为序列，不必使用树链剖分，只要用后序遍历然后给每个结点标上一个优先值，能够表示结点是那些点的父亲即可。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20c6a60000284546b152abfb1ef8398f.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2JlbGwwNDEwMzA=,size_16,color_FFFFFF,t_70#pic_center)
+![[Pasted image 20240927172111.png]]
 
 核心代码：
 
@@ -501,7 +500,8 @@ int main()
 [P1972 [SDOI2009]HH的项链](https://www.luogu.com.cn/problem/P1972)
 
 可以考虑树状数组离线回答询问。有一种巧妙的差分数组构造。考虑以下情况：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/516e820b10894e2992d80d08fbcec305.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2JlbGwwNDEwMzA=,size_16,color_FFFFFF,t_70#pic_center)
+
+![[Pasted image 20240927172124.png]]
 
 从当前的指针开始，第一个数字 $i$ 在树状数组对应位置中 $+1$ ，以后的数字 $i$ 都不打标记，这样只有第一个 $i$ 会对答案贡献 $1$ ，表示这个区间内有一种数字 $i$。指针更新的时候，记得去除以前的标记，给最新的数字打上标记。
 
