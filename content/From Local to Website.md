@@ -73,7 +73,7 @@ Once the installation is done, you can open your folder in VS Code for the conve
 
 [Setting up your GitHub repository (jzhao.xyz)](https://quartz.jzhao.xyz/setting-up-your-GitHub-repository)
 
-If you haven't have SSH keys, add new keys for your Github account first.
+If you haven't had SSH keys, add new keys for your Github account first.
 
 ```bash
 ls -al ~/.ssh # to check if you have ssh keys in local

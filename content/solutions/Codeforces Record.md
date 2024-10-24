@@ -5,6 +5,189 @@ tags:
   - solution
 ---
 
+### 981 (Div. 3)
+
+#### [Problem - 2033C - Codeforces](https://codeforces.com/problemset/problem/2033/C)
+
+#dp 
+
+C 比 D 难... 好吧是我太菜了...
+
+给一个数组 $\{a_n\}$ ，定义打扰值为满足 $a_j = a_{j + 1}, 1\leqslant j < n$ 的 $j$ 的个数.
+
+你可以交换 $a_i$ 和 $a_{n-i+1}$ ，并且可以进行任意次操作.
+
+求经过任意次操作之后，数组的最小打扰值是多少？
+
+$1\leqslant t\leqslant 10^4$
+
+$2\leqslant n \leqslant 10^5$
+
+如果我们以正常的思维去想的话，我们会想什么时候交换最合适. 但是只要这样想， 我们每次交换 $a_i$ 和 $a_{n-i+1}$ 之后，总是具有后效性的.
+
+比如我们从外往内考虑交换，交换完外面一层，去交换里面一层，在里面的交换就会影响前面交换产生的效益.
+
+这迫使我们去想一种没有后效性的解决方案.
+
+将交换操作变成放置操作.
+
+我们不要想给定的数组，考虑一开始整个数组都是空的，然后往空数组 $b$ 从外往里添加数对 $(a_i,a_{n-i+1})$.
+
+数对只有两种放置方法，$...,a_i,...,a_{n-i+1},...$ 或者 $...,a_{n-i+1},...,a_i,...$ 而且一旦放置，就与上一次产生效益，并且下一次放置不会影响这一次效益，只会产生新的效益.
+
+于是我们考虑 DP. 设 $f(i,1/0)$ 表示放置了前 $i$ 对数对，放置顺序是 $0:a_i,a_{n-i+1}/1:a_{n-i+1},a_i$ 的最小打扰值.
+
+转移方程如下：
+
+$$
+\begin{aligned}
+f(i,0) = \min\{f(i-1,0)+val_0,f(i-1,1)+val_1\} \\[2ex]
+f(i,1) = \min\{f(i-1,0)+val_1,f(i-1,1)+val_0\}
+\end{aligned}
+$$
+其中，效益的计算如下
+
+$$
+\begin{aligned}
+val_0 = [a_i=a_{i-1}]+[a_{n-i+1}=a_{n-(i-1)+1}] \\[2ex]
+val_1 = [a_i=a_{n-(i-1)+1}]+[a_{n-i+1}=a_{i-1}]
+\end{aligned}
+$$
+
+时间复杂度 $O(n)$
+
+> [!code]- Code
+> 
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> const int maxn = 1e5;
+> const int inf = 1e9;
+> int t, n, a[maxn + 5], f[maxn + 5][2];
+> int half, cnt1, cnt2, ans;
+> 
+> int main()
+> {
+>     cin >> t;
+>     for(int tt = 1;tt <= t;tt ++)
+>     {
+>         cin >> n;
+>         for(int i = 1;i <= n;i ++)
+>         {
+>             cin >> a[i];
+>             f[i][0] = f[i][1] = inf;
+>         }
+>         f[1][0] = f[1][1] = 0;
+>         half = n/2;ans = 0;
+>         if(n & 1) half ++;
+>         else if(a[half] == a[half + 1])ans = 1;
+>         for(int i = 2;i <= half;i ++)
+>         {
+>             cnt1 = 0;cnt2 = 0;
+>             if(a[i] == a[i - 1]) cnt1 ++;
+>             if(a[n - i + 1] == a[n - (i - 1) + 1]) cnt1 ++;
+>             if(a[i] == a[n - (i - 1) + 1]) cnt2 ++;
+>             if(a[n - i + 1] == a[i - 1]) cnt2 ++;
+>             f[i][0] = min(f[i - 1][0] + cnt1, f[i - 1][1] + cnt2);
+>             f[i][1] = min(f[i - 1][0] + cnt2, f[i - 1][1] + cnt1);
+>         }
+>         ans += min(f[half][0],f[half][1]);
+>         
+>         cout << ans << endl;
+>     }
+>     return 0;
+> }
+> ```
+
+
+#### [Problem - 2033D - Codeforces](https://codeforces.com/problemset/problem/2033/D)
+
+#greedy #prefix_sum 
+
+给一个数组 $\{a_n\}$ ，求其中最多有多少互不相交的美丽区间.
+
+$[l,r]$ 是一个美丽区间，当且仅当 $\sum_{i=l}^r a_i = 0$
+
+$1\leqslant t\leqslant 10^4$
+
+$1\leqslant n\leqslant 10^5$
+
+$\sum_{i=l}^r a_i = 0$ 对于这样的条件，我们可以考虑 $\{a_n\}$ 的前缀和数组 $\{s_n\}$. 
+
+如果区间 $[l,r]$ 是美丽区间，那么一定有 $s_r = s_{l-1}$
+
+所以我们可以找出所有的美丽区间.
+
+然后就是经典的贪心问题：[[Greedy#最多不相交区间]]
+
+我们只要把所有区间按右端点由小到大排序，然后贪心选取即可.
+
+时间复杂度 $O(n\log n)$
+
+> [!code]- Code
+> ```cpp
+> #include<bits/stdc++.h>
+> 
+> using namespace std;
+> typedef long long ll;
+> const int maxn = 1e5;
+> ll t, n, a[maxn + 5], s[maxn + 5];
+> map<ll, int> pos_map;
+> int bcnt,lst,ans;
+> struct seg{
+>     int lp;
+>     int rp;
+> }b[maxn + 5];
+> 
+> bool cmp(seg x, seg y)
+> {
+>     if(x.rp != y.rp) return x.rp < y.rp;
+>     return x.lp < y.lp;
+> }
+> 
+> int main()
+> {
+>     cin >> t;
+>     for(int tt = 1;tt <= t;tt ++)
+>     {
+>         cin >> n;bcnt = 0;
+>         for(int i = 1;i <= n;i ++)
+>         {
+>             cin >> a[i];
+>             s[i] = s[i - 1] + a[i];
+>         }
+>         pos_map.clear();
+>         for(int i = 0;i <= n;i ++)
+>         {
+>             if(pos_map.count(s[i]) == 0) pos_map[s[i]] = i;
+>             else
+>             {
+>                 bcnt ++;
+>                 b[bcnt].lp = pos_map[s[i]] + 1;
+>                 b[bcnt].rp = i;
+>                 pos_map[s[i]] = i;
+>             }
+>         }
+>         sort(b + 1,b + 1 + bcnt, cmp);
+>         lst = -1;ans = 0;
+>         for(int i = 1;i <= bcnt;i ++)
+>         {
+>             //cout <<'('<< b[i].lp << ','<<b[i].rp <<')'<<endl;
+>             if(b[i].lp > lst)
+>             {
+>                 ans ++;
+>                 lst = b[i].rp;
+>                 
+>             }
+>         }
+>         cout << ans << endl;
+>     }
+>     return 0;
+> }
+> ```
+> 
+
 ### 974 (Div. 3)
 
 #### [Problem - 2014B - Codeforces](https://codeforces.com/problemset/problem/2014/B)
