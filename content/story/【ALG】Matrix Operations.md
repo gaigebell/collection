@@ -2,7 +2,7 @@
 title: ALG3 | Matrix Operations
 draft: false
 tags:
-  - example-tag
+  - algebra
 ---
 > Content is on the way :-) ...
 

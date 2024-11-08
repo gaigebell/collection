@@ -2,7 +2,7 @@
 title: ALG | The Inverse of a Matrix
 draft: false
 tags:
-  - example-tag
+  - algebra
 ---
 > Content is on the way :-) ...
 
@@ -49,28 +49,26 @@ represents a row operation on identity matrix
 
 Replacement
 
-$$E = \begin{bmatrix}1 & 0 & 0 \\
-0 & 1 & 0 \\
--4 & 0 & 1 
-\end{bmatrix}$$
+$$
+E = \begin{bmatrix}1 & 0 & 0 \\ 0 & 1 & 0 \\ -4 & 0 & 1  \end{bmatrix}
+$$
 
 Interchange
 
-$$E = \begin{bmatrix}0 & 1 & 0 \\
-1 & 0 & 0 \\
-0 & 0 & 1 
-\end{bmatrix}$$
+$$
+E = \begin{bmatrix}0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1  \end{bmatrix}
+$$
 
 Scaling
 
-$$E = \begin{bmatrix}1 & 0 & 0 \\
-0 & 1 & 0 \\
-0 & 0 & 5 
-\end{bmatrix}$$
+$$
+E = \begin{bmatrix}1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 5  \end{bmatrix}
+$$
 
-[!important] THEOREM 7
 
-An $n\times n$ matrix $A$ is invertible if and only if $A$ is row equivalent to $I_n$ , and in this case, any sequence of elementary row operations that reduces $A$ to $I_n$ also transforms $I_n$ into $A^{-1}$
+> [!important] THEOREM 7
+>
+>An $n\times n$ matrix $A$ is invertible if and only if $A$ is row equivalent to $I_n$ , and in this case, any sequence of elementary row operations that reduces $A$ to $I_n$ also transforms $I_n$ into $A^{-1}$
 
 
 

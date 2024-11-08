@@ -1,6 +1,6 @@
 ---
 title: ALG1 | Solving Linear Systems
-draft: false
+draft: true
 tags:
   - example-tag
 ---
