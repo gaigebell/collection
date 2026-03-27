@@ -1,8 +1,9 @@
 ---
-title: ALG | Vector Spaces and Subspaces
+title: ALG | Rank
 draft: false
 tags:
   - algebra
+  - example-tag
 ---
 
 ### Vectors can be... anything!
@@ -168,4 +169,356 @@ $$
 
 that is ${\bf u}$ is a linear combination of $\{{\bf v}_1,...,{\bf v}_p\}$
 
+
+##### Theorem 9
+
+> [!hint] linearly independent set has maximum size
+> If a  vector space $V$ has a basis ${\cal B}$ , then any set in $V$ containing more than $n$ vectors must be linearly dependent.
+
+
+##### Theorem 10
+
+> [!hint] every basis of $V$ has the same size
+> If a vector space $V$ has a basis of $n$ vectors, then every basis of $V$ must consist of exactly $n$ vectors.
+
+##### Definition
+
+> [!hint] dimension
+> If $V$ is spanned by a finite set, then $V$ is said to be **finite-dimensional**
+> 
+> The **dimension** of $V$, written as ${\rm dim} V$, is the number of vectors in a basis for $V$. 
+> 
+> The dimension of the zero vector space $\{{\mathbf 0}\}$ is defined to be zero. 
+> 
+> If $V$ is not spanned by a finite set, then $V$ is said to be **infinite-dimensional**
+
+
+#### Subspaces of a Finite-Dimensional Space
+
+##### Theorem 11
+
+>[!hint] dimension of a subspace is always less than the space 
+>$H\subset V$, then
+>${\rm dim} H \leqslant {\rm dim} V$
+>
+
+
+##### Theorem 12
+
+>[!hint] The Basis Theorem
+>
+>$V$ is a $p$ dimensional vector space
+>
+>- Any **linearly independent** set with size of $p$ is a basis for $V$
+>- Any set with size of $p$ that spans $V$ is a basis for $V$
+
+
+#### The Dimensions of ${\rm Nul}A$ and ${\rm Col} A$
+
+> [!hint ] 
+> - The dimension of ${\rm Nul\;} A$ = $n($free variables$)$
+> - The dimension of ${\rm Col\;} A$ = $n($pivot columns$)$
+
+
+Wouldn't you agree with me that almost everything has its basis.
+
+I mean skeleton, framework and basic elements.
+
+They arrange and combine in some way then construct a large bunch of things.
+
+Just like dots produce lines, lines produce shapes and planes, planes produce cubes.
+
+And now, we're looking into vector spaces. Intuition tells us that a vector space is actually made up by simple vectors. 
+
+##### Theorem 4
+
+> [!hint] A way to tell a linearly independent set
+> Imagine a set of vectors $\{{\bf v}_1,...,{\bf v}_p\}$ ($p\geqslant 2,{\bf v}_1 \neq {\bf 0}$)
+> 
+> It is **linealy independent** *if and only if*
+> 
+> some ${\bf v}_j(j > 1)$ is a *linear combination* of the preceeding vectors, ${\bf v}_1,...,{\bf v}_{j-1}$
+
+
+
+##### Definition
+
+> [!hint] Basis
+> Imagine $H$ is a subspace of a vector space $V$.
+> 
+> A set of vectors ${\cal B} = \{{\bf b}_1,...,{\bf b}_p\}$ in $V$ is a **basis** for $H$ if
+> 1. ${\cal B}$ is a *linearly independent set*
+> 2. $H = \operatorname{Span}\{{\bf b}_1,...,{\bf b}_p\}$
+
+> [!faq] Can you come up with a basis for $\mathbb{R}^n$ ?
+> An easy way to do so is to imagine a Cartesian coordinate.
+> 
+> ![[Pasted image 20241202112936.png]]
+> 
+> Then you'll find arbitrary vectors on $x,y,z$ axis respectively made up a basis for the space. 
+
+> [!danger] standard basis
+>  
+> $$
+> {\boldsymbol e}_1 = \begin{bmatrix}1 \\ 0 \\ \vdots \\ 0 \end{bmatrix},
+> {\boldsymbol e}_2 = \begin{bmatrix}0 \\ 1 \\ \vdots \\ 0 \end{bmatrix},
+> \cdots,
+> {\boldsymbol e}_n = \begin{bmatrix}0 \\ 0 \\ \vdots \\ n \end{bmatrix}
+> $$
+
+#### The Spanning Set Theorem
+
+$$
+{\mathbf v}_1 = \begin{bmatrix}1\\ 0\\ 0\end{bmatrix}, 
+{\mathbf v}_2 = \begin{bmatrix}0\\ 1\\ 0\end{bmatrix}, 
+{\mathbf v}_3 = \begin{bmatrix}1\\ 3\\ 0\end{bmatrix}
+
+$$
+
+They span $H$
+
+![[Pasted image 20241202114703.png]]
+
+As you can see, ${\mathbf v}_3$ can be expressed as a linear combination of ${\mathbf v}_1, {\mathbf v}_2$  and so are ${\mathbf v}_1$ and ${\mathbf v}_2$. So the basis is not $\{{\mathbf v}_1,{\mathbf v}_2,{\mathbf v}_3\}$ but the set without one of them. 
+
+You may be curious, 
+
+> [!question]
+>does it mean we can construct the set of basis by **removing** some vectors from the whole set?
+
+The answer is YES.
+
+>[!hint] The Spanning Set Theorem
+>Let $S=\{{\mathbf v}_1,...,{\mathbf v_p}\}$ be a set in $V$, and let $H = {\rm Span}\{{\mathbf v}_1,...,{\mathbf v_p}\}$ .
+>- If one of the vectors in $S$ - say, ${\mathbf v}_k$ - is a linear combination of the remaining vectors in $S$, then the set formed from $S$ by removing ${\mathbf v}_k$ still spans $H$.
+>- If $H\neq \{{\mathbf 0}\}$, some subset of $S$ is a basis for $H$. 
+
+#### Bases for ${\rm Nul\;} A$ and ${\rm Col}\; A$
+
+##### Theorem 6
+
+> [!hint] A way to construct basis for ${\rm Col}\; A$
+> The pivot columns of a matrix $A$ form a basis for ${\rm Col}\; A$
+
+> [!danger] Attention
+> 
+> Look at the 2 matrices below. They are row equivalent. What are their bases?
+> 
+> $$
+> A = \begin{bmatrix}
+> 1 & 4 & 0 & 2 & 0 \\
+> 0 & 0 & 1 & -1 & 0 \\
+> 0 & 0 & 0 & 0 & 1 \\
+> 0 & 0 & 0 & 0 & 0 
+> \end{bmatrix}
+> $$
+> 
+> $$
+> B = \begin{bmatrix}
+> 1 & 4 & 0 & 2 & -1 \\
+> 3 & 12 & 1 & 5 & 5 \\
+> 2 & 8 & 1 & 3 & 2 \\
+> 5 & 20 & 2 & 8 & 8 
+> \end{bmatrix}
+> $$
+> 
+> Though $A$ is the echelon form of $B$, but pivot columns of $A$ are not pivot columns of $B$.
+> 
+> Column 1, 3, 5 of $A$, $B$ form their basis respectively.
+> 
+> Basis of $A$: $$\begin{bmatrix}1\\ 0\\ 0\\ 0 \end{bmatrix},\begin{bmatrix}0\\ 1\\ 0\\ 0 \end{bmatrix},\begin{bmatrix}0\\ 0\\ 1\\ 0 \end{bmatrix}$$
+> 
+> Basis of $B$: $$\begin{bmatrix}1\\ 3\\ 2\\ 5 \end{bmatrix},\begin{bmatrix}0\\ 1\\ 1\\ 2 \end{bmatrix},\begin{bmatrix}-1\\ 5\\ 2\\ 8 \end{bmatrix}$$
+
+
+
+#### Two Views of a Basis
+
+To summary, the size of a basis can not be too large, but can not be too small neither. 
+
+The set of basis is, to some extent, to be exactly of the right size.
+
+$$
+\left\{\begin{bmatrix}1\\ 0\\ 0 \end{bmatrix},\begin{bmatrix}2\\ 3\\ 0 \end{bmatrix},\begin{bmatrix}4\\ 5\\ 6 \end{bmatrix}\right\}
+$$
+
+- If there are too many vectors, then you might fail the condition of linearly independence. 
+	$$\left\{\begin{bmatrix}1\\ 0\\ 0 \end{bmatrix},\begin{bmatrix}2\\ 3\\ 0 \end{bmatrix},\begin{bmatrix}4\\ 5\\ 6 \end{bmatrix},\begin{bmatrix} 7 \\ 8\\ 9 \end{bmatrix}\right\}$$
+- If there are too little vectors, then your set might fail to span the space.
+	$$\left\{\begin{bmatrix}1\\ 0\\ 0 \end{bmatrix},\begin{bmatrix}2\\ 3\\ 0 \end{bmatrix}\right\}$$
+
+### Null Space
+
+When we talk about null space, we're talking in the context of matrix algebra.
+
+So only a matrix have null space.
+
+#### Definition
+
+>[!hint] Null Space
+>The **null space** of an $m\times n$ matrix $A$, written as ${\rm Nul\;} A$, is the set of all solutions of the homogeneous equation $A{\bf x} = {\bf 0}$.
+>$$
+>{\rm Nul\;}A=\{{\bf x}:{\bf x}\in \mathbb R^n\\, and \,A{\bf x} = {\bf 0}\}
+>$$
+
+For simplicity, null space is the solution space of equation $A{\bf x} = {\bf 0}$
+
+#### Theorem 2
+
+> [!hint] null space is the solution space to $A{\bf x} = {\bf 0}$
+> the set of all solutions is a subspace of $\mathbb R^n$
+> 
+> (We have $m$ equations and $n$ unknowns)
+
+To think in a dynamic way, ${\rm Nul\,} A$ contains all the ${\bf x}$ that turns $A$ to ${\bf 0}$. Or to say $A$ is a transformation that turns all the ${\bf x} \in {\rm Nul\,} A$ to ${\bf 0}$.
+
+Then $A:{\bf x} \mapsto {\bf 0}$
+
+#### Description
+
+When we solve $A{\bf x}={\bf 0}$ , we'll get every variable in the end.
+
+Some of them are free variables.
+
+We rewrite the solution in terms of these free variables.
+
+Decompose the vector, free variables will become the weights. And their corresponding vectors span ${\rm Nul\,} A$
+
+>[!example] Example
+>$$
+>\begin{bmatrix}
+>x_1 \\ x_2\\ x_3 \\ x_4 \\ x_5
+>\end{bmatrix}
+>=
+>\begin{bmatrix}
+>2x_2+x_4-3x_5 \\ x_2 \\ -2x_4+2x_5 \\ x_4 \\ x_5
+>\end{bmatrix}
+>=
+>x_2\underbrace{
+>\begin{bmatrix}
+>2\\ 1\\ 0\\ 0\\ 0
+>\end{bmatrix}
+>}_{\bf u}
+>+x_4
+>\underbrace{
+>\begin{bmatrix}
+>1\\ 0\\ -2\\ 1\\ 0
+>\end{bmatrix}
+>}_{\bf v}
+>+ x_5
+>\underbrace{
+>\begin{bmatrix}
+>-3\\ 0\\ 2\\ 0\\ 1
+>\end{bmatrix}
+>}_{\bf w}
+>$$
+>So the null space is spanned by $\{\bf u,v,w\}$
+
+
+>[!hint] Points
+>1. The spanning set is automatically **linearly independent**
+>2. the number of vectors in the spanning set = the number of free variables.
+
+
+### Column Space
+
+When we talk about column space, we're talking in the context of matrix algebra.
+
+So only a matrix has column space.
+
+#### Definition
+
+>[!hint] Column Space
+>The **column space** of an $m\times n$ matrix $A$, written as ${\rm Col\;} A$, is the set of all linear combinations of the columns of $A$.
+>$$
+>{\rm Col\;}A=\operatorname{Span}\{{\bf a}_1,...,{\bf a}_n\}
+>$$
+
+#### Theorem 3
+
+> [!hint] The column space of an $m\times n$ matrix $A$ is a subspace of $\mathbb R^m$
+
+To think in a dynamic way, ${\rm Col\,} A$ is the *range* of the linear transformation ${\bf x}\mapsto A{\bf x}$
+
+
+>[!hint] The column space of an $m \times n$ matrix $A$ is all of $\mathbb R^m$ if and only if the equation $A{\bf x}={\bf b}$ has a solution for each ${\bf b}$ in $\mathbb R^m$
+
+
+### Kernel and Range
+
+when we talk about kernel and range, we're talking in the context of linear transformation.
+
+The **kernel** of a transformation $T$ is the null space of $T$'s matrix.
+
+The **range** of a transformation $T$ is the column space of $T$'s matrix.
+
+
+##### Theorem 7
+
+> [!hint] The Unique Representation Theorem
+> Let ${\cal B} = \{{\mathbf b}_1,...,{\mathbf b}_n\}$ be a basis for a vector space $V$. Then for each ${\mathbf x}\ in V$ , there exists a unique set of scalars $c_1,...,c_n$ such that 
+> $$
+> {\mathbf x} = c_1{\mathbf b}_1 + \cdots + c_n{\mathbf b}_n
+> $$
+
+##### Definition
+
+> [!hint] Coordinate
+> Suppose ${\cal B} = \{{\mathbf b}_1,...,{\mathbf b}_n\}$ is a basis for $V$ and ${\mathbf x}\in V$ . The coordinates of ${\mathbf x}$ relative to the basis ${\cal B}$ are the weights $c_1,...,c_n$ such that ${\mathbf x} = c_1{\mathbf b_1}+\cdots+c_n{\mathbf b}_n$
+
+
+#### Coordinates in ${\mathbb R}^n$
+
+$$
+{\mathbf x = P_{\cal B}[{\mathbf x}]_{\cal B}}
+$$
+$P_{\cal B}$ is the basis, $[\mathbf x]_{\cal B}$ is the coordinate of ${\mathbf x}$ relative to the basis.
+
+#### The Coordinate Mapping
+
+
+##### Theorem 8
+
+> [!hint] Mapping from $V$ onto ${\mathbb R}^n$
+> Let ${\cal B}$ be a basis for a vector space $V$. Then the coordinate mapping ${\mathbf x}\mapsto [{\mathbf x}]_{\cal B}$ is a one-to-one linear transformation from $V$ onto ${\mathbb R}^n$
+
+
+
+ 
+The rest of your content lives here. You can use **Markdown** here :)
+
+#### The Row Space
+
+${\rm Row\;} A = {\rm Col\;} A^T$
+
+
+#### The Rank Theorem
+
+##### Definition
+
+>[!hint] Definition
+>The rank of $A$ is the dimension of the column space of $A$
+>$r(A) = {\rm dim}\; A$
+
+##### Theorem 14
+
+>[!hint] The Rank Theorem
+>$r(A) + {\rm dim}\;{\rm Nul}\; A = n$
+
+
+number of pivot columns + number of non-pivot columns = number of columns
+
+
+### Rank and the Invertible Matrix Theorem
+
+##### Theorem
+[[【ALG】Matrix Operations#^588835]]
+
+> [!hint]
+> - The columns of $A$ form a basis of ${\mathbb R}^n$
+> - ${\rm Col} A = {\mathbb R}^n$
+> - ${\rm dim}\;{\rm Col}\; A = n$
+> - $rank(A) = n$
+> - ${\rm Nul} A = \{{\mathbf 0}\}$
+> - ${\rm dim}\; {\rm Nul}\; A = 0$
 
