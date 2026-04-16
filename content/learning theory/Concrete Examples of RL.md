@@ -1,3 +1,10 @@
+---
+title: Concrete Examples of Human RL
+draft: false
+tags:
+  - example-tag
+---
+
 
 [Instrumental learning of social affiliation through outcome and intention.](https://psycnet.apa.org/doiLanding?doi=10.1037%2Fxge0001190)
 
